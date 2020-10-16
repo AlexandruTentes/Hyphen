@@ -3,6 +3,9 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <functional>
+
+#include "../../EngineMaths/EngineMaths.h"
 
 #ifdef _WIN64 //Detecting if the platform is windows
 	#include <windows.h> //Including win api for windows platform

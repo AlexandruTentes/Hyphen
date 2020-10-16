@@ -87,6 +87,12 @@ namespace WindowAPI
 		Sleep(0);
 	}
 
+	void Windows::on_event(Event & e)
+	{
+		std::cout << & KeyDown::get_instance() << std::endl;
+		dispacher.dispatch<KeyDown>(e, KeyDown::get_instance().callback);
+	}
+
 	bool Windows::init()
 	{
 		DWORD window_ex_style;
@@ -235,47 +241,71 @@ namespace WindowAPI
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
+	using namespace WindowAPI;
+
 	switch (msg)
 	{
 	case WM_CREATE: //Event fired when the window has been created
+	{
+		//window_manager_instance.get_one_window(hwnd)->on_event();
+
 		window_manager_instance.get_one_window(hwnd)->create();
 
-		break;
-
+		return 0;
+	}
 	case WM_ACTIVATE:
+	{
 		if (!HIWORD(wparam)) //Check if window is minimized
 		{
+			//window_manager_instance.get_one_window(hwnd)->on_event();
+
 			window_manager_instance.get_one_window(hwnd)->is_minimized = false;
 			window_manager_instance.get_one_window(hwnd)->is_focused = true;
 		}
 		else
 		{
+			//window_manager_instance.get_one_window(hwnd)->on_event();
+
 			window_manager_instance.get_one_window(hwnd)->is_minimized = true;
 			window_manager_instance.get_one_window(hwnd)->is_focused = false;
 		}
 
 		return 0; //Returns to the message loop
-
+	}
 	case WM_KEYDOWN:
+	{
+		KeyDown key_down(wparam);
+
+		window_manager_instance.get_one_window(hwnd)->on_event(key_down);
 
 		return 0;
-
+	}
 	case WM_KEYUP:
+	{
+		KeyUp(11);
+
+		//window_manager_instance.get_one_window(hwnd)->on_event();
 
 		return 0;
-
+	}
 	case WM_SIZE:
+	{
+		//window_manager_instance.get_one_window(hwnd)->on_event();
+
 		window_manager_instance.get_one_window(hwnd)->resize();
 
 		return 0;
-
+	}
 	case WM_DESTROY: //Event fired when the window has been destroyed
+	{
+		//window_manager_instance.get_one_window(hwnd)->on_event();
+
 		window_manager_instance.get_one_window(hwnd)->destroy();
 
 		PostQuitMessage(0); // Tells the window api that this window has requested to terminate
 
 		return 0;
-
+	}
 	default:
 		return DefWindowProc(hwnd, msg, wparam, lparam);
 	}

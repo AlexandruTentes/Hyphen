@@ -3,6 +3,7 @@
 #define WINDOW_H_
 
 #include "CompiledHeaders.h"
+#include "../WindowEvent.h"
 
 namespace WindowAPI
 {
@@ -34,6 +35,7 @@ namespace WindowAPI
 		virtual void destroy() = 0;
 		virtual void show() = 0;
 		virtual void resize() = 0;
+		virtual void on_event(Event & e) = 0;
 		
 		virtual ~Window() {};
 

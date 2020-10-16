@@ -4,6 +4,7 @@
 
 #include "Platform.h"
 #include "Graphics/Window/Window.h"
+#include "../lib/Listener.h"
 
 namespace Hyphen
 {
@@ -11,6 +12,8 @@ namespace Hyphen
 	{
 	public:
 		void run();
+	private:
+		Listener & listener = Listener::get_instance();
 	};
 
 	App * create();

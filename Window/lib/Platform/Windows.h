@@ -10,12 +10,14 @@
 #include "../WindowAPI.h"
 #include "../WindowManager.h"
 
+#define BIND_EVENT(x) std::bind(&x, this, std::placeholders::_1)
+
 //===== The win api procedure =====//
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
 //===== Getting the window manager singleton instance =====//
-static WindowAPI::WindowManager<HWND> & window_manager_instance = 
-	WindowAPI::WindowManager<HWND>::get_instance();
+static WindowAPI::WindowManager<HWND> & window_manager_instance =
+WindowAPI::WindowManager<HWND>::get_instance();
 
 namespace WindowAPI
 {
@@ -30,6 +32,7 @@ namespace WindowAPI
 		void destroy() override;
 		void show() override;
 		void resize() override;
+		void on_event(Event & e) override;
 
 		void window_msg_handler();
 		void kill_window();
@@ -42,6 +45,7 @@ namespace WindowAPI
 		HWND handler = NULL; //Window handler
 		HINSTANCE hinstance = NULL; //This application's handler
 		std::string class_name = "test_class";
+		Dispatcher dispacher;
 
 	private:
 		WindowSpecs specs;
