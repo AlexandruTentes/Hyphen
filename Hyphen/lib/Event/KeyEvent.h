@@ -2,11 +2,11 @@
 
 #define KEYEVENT_H_
 
-#include "../Event.h"
+#include "Event.h"
 
-namespace WindowAPI
+namespace Hyphen
 {
-	//===== Parent key class =====//
+	//===== Parent key event class (raw) =====//
 	template <class T>
 	class Key : public Event
 	{
@@ -30,24 +30,22 @@ namespace WindowAPI
 	};
 
 	//===== Key pressed event =====//
-	class KeyDown : public Key<KeyDown>
+	class API KeyDown : public Key<KeyDown>
 	{
 	public:
 		KeyDown() {};
 		KeyDown(int key) : Key(key) {};
 
-		static EventType get_static_type() { return KEYDOWN; };
-		virtual EventType get_type() override { return KEYDOWN; };
+		SET_CLASS_TYPE(KEYDOWN)
 	};
 
 	//===== Key released event =====//
-	class KeyUp : public Key<KeyUp>
+	class API KeyUp : public Key<KeyUp>
 	{
 	public:
 		KeyUp() {};
 		KeyUp(int key) : Key(key) {};
 
-		static EventType get_static_type() { return KEYUP; };
-		virtual EventType get_type() override { return KEYUP; };
+		SET_CLASS_TYPE(KEYUP)
 	};
 }

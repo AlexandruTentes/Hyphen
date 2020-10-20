@@ -6,7 +6,7 @@ class Sandbox : public Hyphen::App
 public:
 	Sandbox() {};
 private:
-	//EventController event_controller;
+	EventController event_controller;
 };
 
 Hyphen::App * Hyphen::create()

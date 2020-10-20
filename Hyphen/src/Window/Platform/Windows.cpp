@@ -1,10 +1,10 @@
-#include "../../lib/Platform/Windows.h"
+#include "../../../lib/Window/Platform/Windows.h"
 
 //===== Check if the OS is Windows =====//
 #ifdef WINDOWS_H_
 
 //===== Declaring WindowAPI namespace members =====//
-namespace WindowAPI
+namespace Hyphen
 {
 	//===== Defining the extern create_window function which returns an Windows window =====//
 	Window * Window::create_window(const WindowSpecs & specs)
@@ -85,12 +85,6 @@ namespace WindowAPI
 
 		//===== Prevent cpu throttle =====//
 		Sleep(0);
-	}
-
-	void Windows::on_event(Event & e)
-	{
-		std::cout << & KeyDown::get_instance() << std::endl;
-		dispacher.dispatch<KeyDown>(e, KeyDown::get_instance().callback);
 	}
 
 	bool Windows::init()
@@ -241,14 +235,16 @@ namespace WindowAPI
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
-	using namespace WindowAPI;
+	using namespace Hyphen;
 
 	switch (msg)
 	{
 	case WM_CREATE: //Event fired when the window has been created
 	{
-		//window_manager_instance.get_one_window(hwnd)->on_event();
+		LPCREATESTRUCTA lpcrstr = (LPCREATESTRUCTA) lparam;
+		WindowCreate create(lpcrstr->cx, lpcrstr->cy);
 
+		window_manager_instance.get_one_window(hwnd)->on_event<WindowCreate>(create);
 		window_manager_instance.get_one_window(hwnd)->create();
 
 		return 0;
@@ -276,33 +272,43 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	{
 		KeyDown key_down(wparam);
 
-		window_manager_instance.get_one_window(hwnd)->on_event(key_down);
+		window_manager_instance.get_one_window(hwnd)->on_event<KeyDown>(key_down);
 
 		return 0;
 	}
 	case WM_KEYUP:
 	{
-		KeyUp(11);
+		KeyUp key_up(wparam);
 
-		//window_manager_instance.get_one_window(hwnd)->on_event();
+		window_manager_instance.get_one_window(hwnd)->on_event<KeyUp>(key_up);
 
 		return 0;
 	}
 	case WM_SIZE:
 	{
-		//window_manager_instance.get_one_window(hwnd)->on_event();
+		WindowResize resize(LOWORD(lparam), HIWORD(lparam));
 
+		window_manager_instance.get_one_window(hwnd)->on_event<WindowResize>(resize);
 		window_manager_instance.get_one_window(hwnd)->resize();
 
 		return 0;
 	}
 	case WM_DESTROY: //Event fired when the window has been destroyed
 	{
-		//window_manager_instance.get_one_window(hwnd)->on_event();
-
+		WindowClose close;
+		
+		window_manager_instance.get_one_window(hwnd)->on_event<WindowClose>(close);
 		window_manager_instance.get_one_window(hwnd)->destroy();
 
 		PostQuitMessage(0); // Tells the window api that this window has requested to terminate
+
+		return 0;
+	}
+	case WM_MOUSEMOVE:
+	{
+		MouseMove mouse(GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam));
+
+		window_manager_instance.get_one_window(hwnd)->on_event<MouseMove>(mouse);
 
 		return 0;
 	}

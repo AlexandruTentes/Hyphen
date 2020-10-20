@@ -1,10 +1,10 @@
-#include "../../../../lib/Graphics/Window/API/OpenGLWindows.h"
+#include "../../../lib/Window/API/OpenGLWindows.h"
 
 #ifdef OPENGLWINDOWWINDOWS_H_
 
 namespace Hyphen
 {
-	Window * Window::create()
+	HyphenWindow * HyphenWindow::create()
 	{
 		return new OpenGLWindowWindows;
 	}
@@ -12,7 +12,7 @@ namespace Hyphen
 	bool OpenGLWindowWindows::init()
 	{
 		//===== Casting the parent class instance as the child Windows window =====//
-		window_windows = static_cast<WindowAPI::Windows *>(window);
+		window_windows = static_cast<Windows *>(window);
 
 		bool basic_window_init = window->init();
 

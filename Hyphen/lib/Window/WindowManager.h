@@ -2,14 +2,14 @@
 
 #define WINDOWMANAGER_H_
 
-#include "CompiledHeaders.h"
+#include "../CompiledHeaders.h"
 #include "WindowAPI.h"
 
 ////////////////////////////////////////////////////////////////
 //===== singleton class that manages all created windows =====//
 ////////////////////////////////////////////////////////////////
 
-namespace WindowAPI
+namespace Hyphen
 {
 	template <typename T>
 	class WindowManager
@@ -46,37 +46,37 @@ namespace WindowAPI
 	////////////////////////////////////////////////////////////
 
 	template <typename T>
-	WindowAPI::WindowManager<T>::~WindowManager()
+	Hyphen::WindowManager<T>::~WindowManager()
 	{
 		windows.clear();
 	}
 
 	template <typename T>
-	std::map<T, Window *> WindowAPI::WindowManager<T>::get_all()
+	std::map<T, Window *> Hyphen::WindowManager<T>::get_all()
 	{
 		return windows;
 	}
 
 	template <typename T>
-	void WindowAPI::WindowManager<T>::window_initialization(Window * window)
+	void Hyphen::WindowManager<T>::window_initialization(Window * window)
 	{
 		window_init = window;
 	}
 
 	template <typename T>
-	void WindowAPI::WindowManager<T>::remove(T hwnd)
+	void Hyphen::WindowManager<T>::remove(T hwnd)
 	{
 		windows.erase(hwnd);
 	}
 
 	template <typename T>
-	Window * WindowAPI::WindowManager<T>::get_one_window(T hwnd)
+	Window * Hyphen::WindowManager<T>::get_one_window(T hwnd)
 	{
 		return windows[hwnd] == nullptr ? window_init : windows[hwnd];
 	}
 
 	template <typename T>
-	void WindowAPI::WindowManager<T>::insert(T hwnd, Window * window)
+	void Hyphen::WindowManager<T>::insert(T hwnd, Window * window)
 	{
 		windows[hwnd] = window;
 	}

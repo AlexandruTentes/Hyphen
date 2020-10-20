@@ -9,7 +9,7 @@
 
 namespace Hyphen
 {
-	class OpenGLWindowLinux : public Window
+	class OpenGLWindowLinux : public HyphenWindow
 	{
 	public:
 		virtual ~OpenGLWindowLinux() override;

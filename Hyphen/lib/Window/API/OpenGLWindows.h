@@ -9,7 +9,7 @@
 
 namespace Hyphen
 {
-	class OpenGLWindowWindows : public Window
+	class OpenGLWindowWindows : public HyphenWindow
 	{
 	public:
 		bool init() override;
@@ -22,7 +22,7 @@ namespace Hyphen
 		GLvoid resize_scene(GLsizei width, GLsizei height);
 
 	private:
-		WindowAPI::Windows * window_windows;
+		Windows * window_windows;
 		HGLRC hglrc = NULL;	//Rendering device context
 	};
 }

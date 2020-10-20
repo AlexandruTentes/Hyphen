@@ -2,10 +2,14 @@
 
 #define EVENT_H_
 
-#include "CompiledHeaders.h"
+#include "../CompiledHeaders.h"
+#include "../Platform.h"
 
-namespace WindowAPI
+namespace Hyphen
 {
+#define SET_CLASS_TYPE(x)	static EventType get_static_type() { return x; }; \
+							virtual EventType get_type() override { return x; };
+
 	enum EventType
 	{
 		NONE,
@@ -23,13 +27,12 @@ namespace WindowAPI
 		MOUSEBUTTON = 1 << 4
 	};
 
-	class Event
+	class API Event
 	{
-		friend class Dispacher;
+		friend class Dispatcher;
 	public:
 		virtual EventType get_type() { return NONE; };
 		virtual int get_category() { return 0; };
-		template <class T> T & cast() { return static_cast<T &>(*this); };
 
 		bool in_category(EventCategory category) { return get_category() & category; };
 	};
@@ -40,14 +43,10 @@ namespace WindowAPI
 		template <class T>
 		bool dispatch(Event & e, void (* func)(T &))
 		{
-			auto & event = e.cast<T>();
+			auto & event = static_cast<T &>(e);
 
 			if (func == nullptr)
-			{
-				std::cout << "CALLBACK NULL" << std::endl;
-
 				return false;
-			}
 
 			if (event.get_type() == T::get_static_type())
 			{
@@ -55,10 +54,7 @@ namespace WindowAPI
 
 				return true;
 			}
-			else
-				std::cout << "EVENT TYPE MISMATCH " << event.get_type() << "--" << T::get_static_type() << std::endl;
-
-			return false;
+			else return false;
 		}
 	};
 }

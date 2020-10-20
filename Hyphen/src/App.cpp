@@ -2,16 +2,9 @@
 
 namespace Hyphen
 {
-	void on_event(WindowAPI::KeyDown & e)
-	{
-		std::cout << e.get_key() << std::endl;
-	}
-
 	void App::run()
 	{
-		listener.register_event(on_event);
-
-		Window * app_window = Window::create();
+		HyphenWindow * app_window = HyphenWindow::create();
 
 		if (!app_window->init())
 			std::cerr << "Error at window initialization!\n";

@@ -2,10 +2,13 @@
 
 #define WINDOW_H_
 
-#include "CompiledHeaders.h"
-#include "../WindowEvent.h"
+#include "../CompiledHeaders.h"
+#include "../Event/Event.h"
+#include "../Event/KeyEvent.h"
+#include "../Event/MouseEvent.h"
+#include "../Event/WindowEvent.h"
 
-namespace WindowAPI
+namespace Hyphen
 {
 	struct WindowSpecs
 	{
@@ -35,7 +38,11 @@ namespace WindowAPI
 		virtual void destroy() = 0;
 		virtual void show() = 0;
 		virtual void resize() = 0;
-		virtual void on_event(Event & e) = 0;
+
+		template <class T> void on_event(Event & e)
+		{
+			dispatcher.dispatch<T>(e, T::get_instance().callback);
+		}
 		
 		virtual ~Window() {};
 
@@ -47,5 +54,6 @@ namespace WindowAPI
 		bool is_focused = true;
 
 	private:
+		Dispatcher dispatcher;
 	};
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../CompiledHeaders.h"
+#include "../../CompiledHeaders.h"
 
 //===== Check if the OS is Linux =====//
 #ifdef LINUX
@@ -10,7 +10,7 @@
 #include "../WindowAPI.h"
 #include "../WindowManager.h"
 
-namespace WindowAPI
+namespace Hyphen
 {
 	class Linux : public Window
 	{

@@ -9,7 +9,7 @@
 
 namespace Hyphen
 {
-	class DirectXWindowWindows : public Window
+	class DirectXWindowWindows : public HyphenWindow
 	{
 	public:
 		virtual ~DirectXWindowWindows() override;

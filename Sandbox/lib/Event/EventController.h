@@ -1,13 +1,11 @@
 #pragma once
 
 #include "../CompiledHeaders.h"
-#include "Listener.h"
+#include "HyphenListener.h"
 #include "Event.h"
 
-class EventController
+class EventController : public Hyphen::Listener
 {
 public:
 	EventController();	
-private:
-	Hyphen::Listener & listener = Hyphen::Listener::get_instance();
 };

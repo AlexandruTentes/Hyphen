@@ -1,4 +1,4 @@
-#include "../../../../lib/Graphics/Window/API/OpenGLLinux.h"
+#include "../../../lib/Window/API/OpenGLLinux.h"
 
 #ifdef OPENGLWINDOWLINUX_H_
 

@@ -1,4 +1,4 @@
-#include "../../../../lib/Graphics/Window/API/DirectXWindows.h"
+#include "../../../lib/Window/API/DirectXWindows.h"
 
 #ifdef DIRECTXWINDOWWINDOWS_H_
 
