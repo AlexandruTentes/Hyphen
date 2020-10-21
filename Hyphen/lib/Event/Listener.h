@@ -10,23 +10,10 @@
 
 namespace Hyphen
 {
-#define REGISTER(x) void register_event(void(*func)(x &)) { x::get_instance().set_callback(func); }
-
 	class Listener
 	{
 	public:
-		REGISTER(KeyDown)
-		REGISTER(KeyUp)
-		REGISTER(MouseMove)
-		REGISTER(MouseScroll)
-		REGISTER(MouseButtonDown)
-		REGISTER(MouseButtonUp)
-		REGISTER(WindowResize)
-		REGISTER(WindowClose)
-		REGISTER(WindowCreate)
-		REGISTER(WindowFocus)
-		REGISTER(WindowLostFocus)
-		REGISTER(WindowMove)
+		template <class T> void register_event(void(*func)(T &)) { T::get_instance().set_callback(func); }
 	};
 
 }

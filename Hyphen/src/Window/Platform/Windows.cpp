@@ -227,6 +227,15 @@ namespace Hyphen
 
 		is_running = true;
 	}
+
+	std::tuple<float, float> Windows::get_float_xy(int x, int y)
+	{
+		//Get OS dpi scaling and normalize it to windows (96 pixels per unit)
+		float dip_x = GetDeviceCaps(hdc, LOGPIXELSX) / 96.0f;
+		float dip_y = GetDeviceCaps(hdc, LOGPIXELSY) / 96.0f;
+
+		return std::make_tuple(((float)x) / dip_x, ((float)x) / dip_y);
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -306,7 +315,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	}
 	case WM_MOUSEMOVE:
 	{
-		MouseMove mouse(GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam));
+		std::tuple<float, float> xy_tuple = ((Windows *)window_manager_instance.get_one_window(hwnd))->get_float_xy(GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam));
+
+		MouseMove mouse(std::get<0>(xy_tuple), std::get<1>(xy_tuple));
 
 		window_manager_instance.get_one_window(hwnd)->on_event<MouseMove>(mouse);
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CompiledHeaders.h"
+#include "../CompiledHeaders.h"
 
 #define UTILITYDATASTRUCTURES_H_
 
@@ -86,34 +86,6 @@ private:
 	unsigned int size = 0;
 
 	T * data;
-};
-
-///////////////////////////////////////////////////////////
-//===== Class which stores a filename and it's path =====//
-///////////////////////////////////////////////////////////
-
-class FileAndPath
-{
-	//===== Public functions =====//
-public:
-	FileAndPath();
-
-	void add(std::string s, std::string p);
-
-	~FileAndPath();
-
-	//===== Protected functions =====//
-protected:
-	void resize();
-
-	//===== Public variables =====//
-public:
-	const int default_capacity = 4;
-	int capacity;
-
-	int size = 0;
-	std::string * file;
-	std::string * path;
 };
 
 ///////////////////////////////////////////////////

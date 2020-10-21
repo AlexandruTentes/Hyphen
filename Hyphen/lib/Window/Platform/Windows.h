@@ -35,6 +35,7 @@ namespace Hyphen
 
 		void window_msg_handler();
 		void kill_window();
+		std::tuple<float, float> get_float_xy(int x, int y);
 
 		virtual ~Windows() override;
 

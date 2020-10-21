@@ -7,5 +7,5 @@
 class EventController : public Hyphen::Listener
 {
 public:
-	EventController();	
+	EventController();
 };
