@@ -3,7 +3,7 @@
 #define APP_H_
 
 #include "Platform.h"
-#include "Graphics/Window/Window.h"
+#include "Window/Window.h"
 
 namespace Hyphen
 {

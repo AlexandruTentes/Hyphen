@@ -4,7 +4,7 @@ namespace Hyphen
 {
 	void App::run()
 	{
-		Window * app_window = Window::create();
+		HyphenWindow * app_window = HyphenWindow::create();
 
 		if (!app_window->init())
 			std::cerr << "Error at window initialization!\n";

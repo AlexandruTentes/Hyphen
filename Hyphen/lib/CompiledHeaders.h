@@ -1,9 +1,9 @@
 #pragma once
 
-#include <Window.h>
 #include <iostream>
 #include <string>
 #include <map>
+#include <tuple>
 
 //////////////////////////////////
 //===== Platform libraries =====//
@@ -11,6 +11,8 @@
 
 #ifdef _WIN64 //Detecting if the platform is windows
 	//#include <d3d9.h> //Including DirectX api for windows platform
+	#include <windows.h> //Including win api for windows platform
+	#include <WindowsX.h> //Including win api extention 
 	#define WINDOWS
 	#define OPENGL //This should be DIRECTX instead, functionality will come later on
 #elif defined(__linux__) //Detecting linux
