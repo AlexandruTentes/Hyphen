@@ -29,7 +29,7 @@ namespace Hyphen
 		Window * get_one_window(T hwnd);
 		void remove(T hwnd);
 
-		~WindowManager();
+		virtual ~WindowManager();
 
 	//===== Private functions =====//
 	private:

@@ -7,45 +7,35 @@
 namespace Hyphen
 {
 	//===== Parent key event class (raw) =====//
-	template <class T>
-	class Key : public Event
+	class API Key : public Event
 	{
 	public:
-		void(*callback)(T &) = nullptr;
-	public:
-		static T & get_instance() { static T instance; return instance; };
-
-		Key(const Key & other) = delete;
-		Key & operator = (const Key & other) = delete;
-
-		void set_callback(void(*func)(T &)) { callback = func; };
+		EVENT_MEMBER_SETTER(Key, KEY)
+		Key() {}
 		int get_key() { return key; };
-		virtual int get_category() override { return KEYBOARD | INPUT; };
-
+		virtual ~Key() = default;
 	protected:
-		Key() {};
 		Key(int key) : key(key) {};
-
 		int key;
 	};
 
 	//===== Key pressed event =====//
-	class API KeyDown : public Key<KeyDown>
-	{
+	class API KeyDown : public Key
+	{		
 	public:
-		KeyDown() {};
+		EVENT_MEMBER_SETTER(KeyDown, KEYDOWN)
+		KeyDown() {}
 		KeyDown(int key) : Key(key) {};
-
-		SET_CLASS_TYPE(KEYDOWN)
+		virtual ~KeyDown() = default;
 	};
 
 	//===== Key released event =====//
-	class API KeyUp : public Key<KeyUp>
+	class API KeyUp : public Key
 	{
 	public:
-		KeyUp() {};
+		EVENT_MEMBER_SETTER(KeyUp, KEYUP)
+		KeyUp() {}
 		KeyUp(int key) : Key(key) {};
-
-		SET_CLASS_TYPE(KEYUP)
+		virtual ~KeyUp() = default;
 	};
 }

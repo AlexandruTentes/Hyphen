@@ -3,10 +3,11 @@
 #define WINDOW_H_
 
 #include "../CompiledHeaders.h"
-#include "../Event/Event.h"
 #include "../Event/KeyEvent.h"
 #include "../Event/MouseEvent.h"
 #include "../Event/WindowEvent.h"
+#include "../Layer/LayerStack.h"
+#include "../Event/Dispatcher.h"
 
 namespace Hyphen
 {
@@ -41,10 +42,13 @@ namespace Hyphen
 
 		template <class T> void on_event(Event & e)
 		{
+			for (unsigned int i = 0; i < layer_stack.get_layers().get_size(); i++)
+				layer_stack.get_layers().get_one(i)->event(e);
+
 			dispatcher.dispatch<T>(e, T::get_instance().callback);
 		}
 		
-		virtual ~Window() {};
+		virtual ~Window() = default;
 
 	public:
 		bool is_running = false;
@@ -54,6 +58,7 @@ namespace Hyphen
 		bool is_focused = true;
 
 	private:
+		LayerStack & layer_stack = LayerStack::get_instance();
 		Dispatcher dispatcher;
 	};
 }

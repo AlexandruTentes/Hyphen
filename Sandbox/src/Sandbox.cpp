@@ -1,12 +1,25 @@
 #include "Hyphen.h"
-#include "../lib/Event/EventController.h"
+#include "../lib/Layers.h"
+#include "../lib/Event.h"
 
 class Sandbox : public Hyphen::App
 {
 public:
-	Sandbox() {};
+	Sandbox() 
+	{
+		push_layer(layer1);
+		push_layer(layer2);
+	};
+
+	virtual ~Sandbox()
+	{
+		delete layer1;
+		delete layer2;
+	};
 private:
-	EventController event_controller;
+	LayerExample * layer1 = new LayerExample();
+	AnotherLayerExample * layer2 = new AnotherLayerExample();
+	UserDefinedEvents e;
 };
 
 Hyphen::App * Hyphen::create()

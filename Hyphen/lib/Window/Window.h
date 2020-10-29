@@ -17,7 +17,7 @@ namespace Hyphen
 
 		virtual bool init() = 0;
 
-		virtual ~HyphenWindow() {};
+		virtual ~HyphenWindow() = default;
 	private:
 	};
 }

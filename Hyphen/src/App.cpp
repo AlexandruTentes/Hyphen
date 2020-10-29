@@ -17,4 +17,24 @@ namespace Hyphen
 		delete app_window;
 		std::cin.get();
 	}
+
+	void App::push_layer(Layer * layer)
+	{
+		layer_stack.push_layer(layer);
+	}
+
+	void App::push_overlay(Layer * overlay)
+	{
+		layer_stack.push_overlay(overlay);
+	}
+
+	void App::pop_layer(Layer * layer)
+	{
+		layer_stack.pop_layer(layer);
+	}
+
+	void App::pop_overlay(Layer * overlay)
+	{
+		layer_stack.pop_overlay(overlay);
+	}
 }
