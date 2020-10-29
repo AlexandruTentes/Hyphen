@@ -12,7 +12,7 @@
 namespace Hyphen
 {
 #define DISPATCH(x, y) dispatch_event(&x, y, this);
-#define REGISTER(x, y) register_event(&x, y, this);
+#define REGISTER(x) register_event(&x, this);
 
 	class API Listener
 	{
@@ -24,9 +24,9 @@ namespace Hyphen
 		}
 
 		// Wrapper around the dispatcher call for events
-		template <class T, class U> void register_event(void(U::*func)(T &), Event & e, U * instance)
+		template <class T, class U> void register_event(void(U::*func)(T &), U * instance)
 		{
-			dispatcher.dispatch<T>(e, std::bind(func, instance, std::placeholders::_1));
+			T::get_instance().callback = std::bind(func, instance, std::placeholders::_1);
 		}
 
 		virtual ~Listener() = default;

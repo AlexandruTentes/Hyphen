@@ -7,11 +7,10 @@
 namespace Hyphen
 {
 	//===== Parent window event class (raw) =====//
-	class API WindowEvent : public Event, public Singleton<WindowEvent>
+	class API WindowEvent : public Event
 	{
 	public:
-		static const EventType type = WINDOWEVENT;
-		EventType get_type() override { return type; }
+		EVENT_MEMBER_SETTER(WindowEvent, WINDOWEVENT)
 		WindowEvent() {};
 		int get_width() { return initial_width; };
 		int get_height() { return initial_height; };
@@ -24,11 +23,10 @@ namespace Hyphen
 	};
 
 	//===== Window resize event =====//
-	class API WindowResize : public WindowEvent, public Singleton<WindowResize>
+	class API WindowResize : public WindowEvent
 	{
 	public:
-		static const EventType type = WINDOWRESIZE;
-		EventType get_type() override { return type; }
+		EVENT_MEMBER_SETTER(WindowResize, WINDOWRESIZE)
 		WindowResize() {}
 		WindowResize(unsigned int width, unsigned int height) :
 			width(width), height(height) {};
@@ -40,52 +38,47 @@ namespace Hyphen
 	};
 
 	//===== Window close event =====//
-	class API WindowClose : public WindowEvent, public Singleton<WindowClose>
+	class API WindowClose : public WindowEvent
 	{
 	public:
-		static const EventType type = WINDOWCLOSE;
-		EventType get_type() override { return type; }
+		EVENT_MEMBER_SETTER(WindowClose, WINDOWCLOSE)
 		WindowClose() {}
 		virtual ~WindowClose() = default;
 	};
 
 	//===== Window create event =====//
-	class API WindowCreate : public WindowEvent, public Singleton<WindowCreate>
+	class API WindowCreate : public WindowEvent
 	{
 	public:
-		static const EventType type = WINDOWCREATE;
-		EventType get_type() override { return type; }
+		EVENT_MEMBER_SETTER(WindowCreate, WINDOWCREATE)
 		WindowCreate() {}
 		WindowCreate(int width, int height) : WindowEvent(width, height){};
 		virtual ~WindowCreate() = default;
 	};
 
 	//===== Window on focus event =====//
-	class API WindowFocus : public WindowEvent, public Singleton<WindowFocus>
+	class API WindowFocus : public WindowEvent
 	{
 	public:
-		static const EventType type = WINDOWFOCUS;
-		EventType get_type() override { return type; }
+		EVENT_MEMBER_SETTER(WindowFocus, WINDOWFOCUS)
 		WindowFocus() {}
 		virtual ~WindowFocus() = default;
 	};
 
 	//===== Window lost focus event =====//
-	class API WindowLostFocus : public WindowEvent, public Singleton<WindowLostFocus>
+	class API WindowLostFocus : public WindowEvent
 	{
 	public:
-		static const EventType type = WINDOWLOSTFOCUS;
-		EventType get_type() override { return type; }
+		EVENT_MEMBER_SETTER(WindowLostFocus, WINDOWLOSTFOCUS)
 		WindowLostFocus() {}
 		virtual ~WindowLostFocus() = default;
 	};
 
 	//===== Window move event =====//
-	class API WindowMove : public WindowEvent, public Singleton<WindowMove>
+	class API WindowMove : public WindowEvent
 	{
 	public:
-		static const EventType type = WINDOWMOVE;
-		EventType get_type() override { return type; }
+		EVENT_MEMBER_SETTER(WindowMove, WINDOWMOVE)
 		WindowMove() {}
 		virtual ~WindowMove() = default;
 	};

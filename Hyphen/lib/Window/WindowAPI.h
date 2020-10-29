@@ -7,6 +7,7 @@
 #include "../Event/MouseEvent.h"
 #include "../Event/WindowEvent.h"
 #include "../Layer/LayerStack.h"
+#include "../Event/Dispatcher.h"
 
 namespace Hyphen
 {
@@ -43,6 +44,8 @@ namespace Hyphen
 		{
 			for (unsigned int i = 0; i < layer_stack.get_layers().get_size(); i++)
 				layer_stack.get_layers().get_one(i)->event(e);
+
+			dispatcher.dispatch<T>(e, T::get_instance().callback);
 		}
 		
 		virtual ~Window() = default;
@@ -56,5 +59,6 @@ namespace Hyphen
 
 	private:
 		LayerStack & layer_stack = LayerStack::get_instance();
+		Dispatcher dispatcher;
 	};
 }

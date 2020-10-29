@@ -19,6 +19,7 @@ public:
 private:
 	LayerExample * layer1 = new LayerExample();
 	AnotherLayerExample * layer2 = new AnotherLayerExample();
+	UserDefinedEvents e;
 };
 
 Hyphen::App * Hyphen::create()
