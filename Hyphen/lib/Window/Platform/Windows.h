@@ -37,7 +37,7 @@ namespace Hyphen
 		void kill_window();
 		std::tuple<float, float> get_float_xy(int x, int y);
 
-		virtual ~Windows() override;
+		virtual ~Windows();
 
 	//===== Public variables =====//
 	public:

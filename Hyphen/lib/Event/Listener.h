@@ -4,16 +4,34 @@
 
 #define LISTENER_H_
 
-#include "../Event/KeyEvent.h"
-#include "../Event/MouseEvent.h"
-#include "../Event/WindowEvent.h"
+#include "Dispatcher.h"
+#include "KeyEvent.h"
+#include "MouseEvent.h"
+#include "WindowEvent.h"
 
 namespace Hyphen
 {
-	class Listener
+#define DISPATCH(x, y) dispatch_event(&x, y, this);
+#define REGISTER(x, y) register_event(&x, y, this);
+
+	class API Listener
 	{
 	public:
-		template <class T> void register_event(void(*func)(T &)) { T::get_instance().set_callback(func); }
+		// Wrapper around the dispatcher call for events
+		template <class T, class U> void dispatch_event(void(U::*func)(T &), Event & e, U * instance)
+		{ 
+			dispatcher.dispatch<T>(e, std::bind(func, instance, std::placeholders::_1)); 
+		}
+
+		// Wrapper around the dispatcher call for events
+		template <class T, class U> void register_event(void(U::*func)(T &), Event & e, U * instance)
+		{
+			dispatcher.dispatch<T>(e, std::bind(func, instance, std::placeholders::_1));
+		}
+
+		virtual ~Listener() = default;
+	private:
+		Dispatcher dispatcher;
 	};
 
 }

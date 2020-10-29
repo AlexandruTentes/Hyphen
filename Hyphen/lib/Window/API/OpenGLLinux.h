@@ -12,7 +12,7 @@ namespace Hyphen
 	class OpenGLWindowLinux : public HyphenWindow
 	{
 	public:
-		virtual ~OpenGLWindowLinux() override;
+		virtual ~OpenGLWindowLinux();
 	private:
 		HGLRC hglrc = NULL;	//Rendering device context
 	};

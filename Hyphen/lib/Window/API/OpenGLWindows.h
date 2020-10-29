@@ -15,7 +15,7 @@ namespace Hyphen
 		bool init() override;
 
 		//===== Nesting deconstructors =====//
-		virtual ~OpenGLWindowWindows() override;
+		virtual ~OpenGLWindowWindows();
 
 	//===== Private functions =====//
 	private:

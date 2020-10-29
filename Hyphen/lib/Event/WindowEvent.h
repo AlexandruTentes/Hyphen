@@ -7,23 +7,16 @@
 namespace Hyphen
 {
 	//===== Parent window event class (raw) =====//
-	template<class T>
-	class WindowEvent : public Event
+	class API WindowEvent : public Event, public Singleton<WindowEvent>
 	{
 	public:
-		void(*callback)(T &) = nullptr;
-	public:
-		static T & get_instance() { static T instance; return instance; };
-
-		WindowEvent(const WindowEvent & other) = delete;
-		WindowEvent & operator = (const WindowEvent & other) = delete;
-
+		static const EventType type = WINDOWEVENT;
+		EventType get_type() override { return type; }
+		WindowEvent() {};
 		int get_width() { return initial_width; };
 		int get_height() { return initial_height; };
-		void set_callback(void(*func)(T &)) { callback = func; };
-		virtual int get_category() override { return WINDOW; };
+		virtual ~WindowEvent() = default;
 	protected:
-		WindowEvent() {};
 		WindowEvent(int width, int height) : 
 			initial_width(width), initial_height(height) {};
 
@@ -31,65 +24,69 @@ namespace Hyphen
 	};
 
 	//===== Window resize event =====//
-	class API WindowResize : public WindowEvent<WindowResize>
+	class API WindowResize : public WindowEvent, public Singleton<WindowResize>
 	{
 	public:
-		WindowResize() {};
+		static const EventType type = WINDOWRESIZE;
+		EventType get_type() override { return type; }
+		WindowResize() {}
 		WindowResize(unsigned int width, unsigned int height) :
 			width(width), height(height) {};
-
 		unsigned int get_resize_width() { return width; };
 		unsigned int get_resize_height() { return height; };
-
-		SET_CLASS_TYPE(WINDOWRESIZE)
-
+		virtual ~WindowResize() = default;
 	private:
 		unsigned short int width, height;
 	};
 
 	//===== Window close event =====//
-	class API WindowClose : public WindowEvent<WindowClose>
+	class API WindowClose : public WindowEvent, public Singleton<WindowClose>
 	{
 	public:
-		WindowClose() {};
-
-		SET_CLASS_TYPE(WINDOWCLOSE)
+		static const EventType type = WINDOWCLOSE;
+		EventType get_type() override { return type; }
+		WindowClose() {}
+		virtual ~WindowClose() = default;
 	};
 
 	//===== Window create event =====//
-	class API WindowCreate : public WindowEvent<WindowCreate>
+	class API WindowCreate : public WindowEvent, public Singleton<WindowCreate>
 	{
 	public:
-		WindowCreate() {};
+		static const EventType type = WINDOWCREATE;
+		EventType get_type() override { return type; }
+		WindowCreate() {}
 		WindowCreate(int width, int height) : WindowEvent(width, height){};
-
-		SET_CLASS_TYPE(WINDOWCREATE)
+		virtual ~WindowCreate() = default;
 	};
 
 	//===== Window on focus event =====//
-	class API WindowFocus : public WindowEvent<WindowFocus>
+	class API WindowFocus : public WindowEvent, public Singleton<WindowFocus>
 	{
 	public:
-		WindowFocus() {};
-
-		SET_CLASS_TYPE(WINDOWFOCUS)
+		static const EventType type = WINDOWFOCUS;
+		EventType get_type() override { return type; }
+		WindowFocus() {}
+		virtual ~WindowFocus() = default;
 	};
 
 	//===== Window lost focus event =====//
-	class API WindowLostFocus : public WindowEvent<WindowLostFocus>
+	class API WindowLostFocus : public WindowEvent, public Singleton<WindowLostFocus>
 	{
 	public:
-		WindowLostFocus() {};
-
-		SET_CLASS_TYPE(WINDOWLOSTFOCUS)
+		static const EventType type = WINDOWLOSTFOCUS;
+		EventType get_type() override { return type; }
+		WindowLostFocus() {}
+		virtual ~WindowLostFocus() = default;
 	};
 
 	//===== Window move event =====//
-	class API WindowMove : public WindowEvent<WindowMove>
+	class API WindowMove : public WindowEvent, public Singleton<WindowMove>
 	{
 	public:
-		WindowMove() {};
-
-		SET_CLASS_TYPE(WINDOWMOVE)
+		static const EventType type = WINDOWMOVE;
+		EventType get_type() override { return type; }
+		WindowMove() {}
+		virtual ~WindowMove() = default;
 	};
 }

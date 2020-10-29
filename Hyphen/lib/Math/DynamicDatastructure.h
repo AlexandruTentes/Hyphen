@@ -1,183 +1,205 @@
 #pragma once
 
 #include "../CompiledHeaders.h"
+#include "../Platform.h"
 
 #define UTILITYDATASTRUCTURES_H_
 
-///////////////////////////////////////////////////////////////////////////////////
-//===== Class which creates and maintains a dynamic array of any class type =====//
-///////////////////////////////////////////////////////////////////////////////////
-
-template <class T>
-class DynamicObject
+namespace Hyphen
 {
-	//===== Public functions =====//
-public:
-	DynamicObject(DynamicObject const & data)	//Copy constructor which makes a clone
+	///////////////////////////////////////////////////////////////////////////////////
+	//===== Class which creates and maintains a dynamic array of any class type =====//
+	///////////////////////////////////////////////////////////////////////////////////
+
+	template <class T>
+	class API DynamicObject
 	{
-		capacity = data.capacity;
-		size = data.size;
+		//===== Public functions =====//
+	public:
+		DynamicObject(DynamicObject const & data)	//Copy constructor which makes a clone
+		{
+			max_capacity = data.max_capacity;
+			capacity = data.capacity;
+			size = data.size;
 
-		this->data = new T[size];
-		memcpy(this->data, data.data, size * sizeof(T));
-	}
+			this->data = new T[size];
+			memcpy(this->data, data.data, size * sizeof(T));
+		}
+		DynamicObject(DynamicObject && data)	//Move constructor which steals data 
+		{
+			max_capacity = data.max;
+			capacity = data.capacity;
+			size = data.size;
 
-	DynamicObject(DynamicObject && data)	//Move constructor which steals data 
-	{
-		capacity = data.capacity;
-		size = data.size;
+			this->data = data.data;
+			data.data = nullptr;
+		}
 
-		this->data = data.data;
-		data.data = nullptr;
-	}
+		DynamicObject()
+		{
+			capacity = default_capacity;
+			data = new T[capacity];
+		};
+		DynamicObject(unsigned int size)
+		{
+			capacity = size;
+			data = new T[capacity];
+		};
+		DynamicObject(T * data, unsigned int size) // Create an array object with the given size and data at once (uses memcpy)
+		{
+			capacity = size;
+			this->data = new T[capacity];
+			memcpy(this->data, data, size * sizeof(data[0]));
+		};
 
-	DynamicObject();
-	DynamicObject(int size);
-	DynamicObject(T * data, int size);	// Create an array object with the given size and data at once (uses memcpy)
+		void push(T * item) // Pushes items to the array object one at a time with resize check at each item
+		{
+			if (is_full())
+				return;
 
-	void push(T * item);	// Pushes items to the array object one at a time with resize check at each item
-	void push(T item);	// Pushes an item at the end of the array, always
-	void push(T item, int index);	// Pushes one item by index at a time, if the item is already on the index, override
+			resize();
+			data[size] = item;
+			size++;
+		};
+		void push(T item) // Pushes an item at the end of the array, always
+		{
+			if (item == NULL || item == nullptr)
+				return;
 
-	T get_one(unsigned int index);
-	T * get_all();
-	unsigned int get_size();
+			if (is_full())
+				return;
 
-	DynamicObject & operator = (DynamicObject const & data)	// Copy assignment
-	{
-		if (this == &data)
+			resize();
+			data[size] = item;
+
+			size++;
+		};
+		void push(T item, int index) // Pushes one item by index at a time, if the item is already on the index, override
+		{
+			if (is_full())
+				return;
+
+			for (int i = 0; i < sizeof(*item) / sizeof(item[0]); i++)
+				push(item[i]);
+		};
+		void remove(unsigned int index)
+		{
+			if (index >= size)
+				return;
+
+			if (index == size - 1)
+			{
+				size = size - 1;
+				return;
+			}
+
+			bool shift = false;
+
+			T * aux = new T[capacity];
+			for (unsigned int i = 0; i < size; i++)
+				if (i != index) aux[shift ? i - 1 : i] = data[i]; else shift = true;
+
+			delete[] data;
+			data = aux;
+
+			size = size - 1;
+		}
+
+		bool is_full() { return max_capacity == 0 ? false : size == max_capacity; };
+		bool is_empty() { return size == 0; };
+		T get_one(unsigned int index) { return data[index]; };
+		T * get_all() { return data; };
+		unsigned int get_size() { return size; };
+
+		DynamicObject & operator = (DynamicObject const & data)	// Copy assignment
+		{
+			if (this == &data)
+				return *this;
+
+			delete[] this->data;
+
+			capacity = data.capacity;
+			size = data.size;
+
+			this->data = new T[size];
+			memcpy(this->data, data.data, size * sizeof(T));
+
 			return *this;
+		}
+		DynamicObject & operator = (DynamicObject && data)	//Move assignment
+		{
+			if (this == &data)
+				return *this;
 
-		delete[] this->data;
+			delete[] data;
 
-		capacity = data.capacity;
-		size = data.size;
+			capacity = data.capacity;
+			size = data.size;
 
-		this->data = new T[size];
-		memcpy(this->data, data.data, size * sizeof(T));
+			this->data = data.data;
+			data.data = nullptr;
+		}
 
-		return *this;
-	}
+		virtual ~DynamicObject() { delete[] data; };
 
-	DynamicObject & operator = (DynamicObject && data)	//Move assignment
+		//===== Protected functions =====//
+	protected:
+		void resize()
+		{
+			if (size < capacity)
+				return;
+
+			T * aux = new T[capacity + default_capacity];
+			memcpy(aux, data, size * sizeof(T));
+
+			delete[] data;
+			data = aux;
+
+			capacity = capacity + default_capacity;
+		};
+
+		//===== Private variables =====//
+	protected:
+		const unsigned int default_capacity = 4;
+		unsigned int max_capacity = 0;
+		unsigned int capacity;
+		unsigned int size = 0;
+
+		T * data;
+	};
+
+	//////////////////////////////////////////
+	//===== Stack object datastructure =====//
+	//////////////////////////////////////////
+
+	template <typename T>
+	class API Stack : public DynamicObject<T>
 	{
-		if (this == &data)
-			return *this;
+	public:
+		Stack() {};
+		Stack(unsigned int capacity) : DynamicObject() { max_capacity = capacity; };
 
-		delete[] data;
+		void pop(unsigned int index) { remove(index); };
+		void pop() { remove(size - 1); };
+		T peek(unsigned int index) { return (size == 0 ? nullptr : data[index]); };
+		T peek() { return (size == 0 ? nullptr : data[size - 1]); };
 
-		capacity = data.capacity;
-		size = data.size;
+		virtual ~Stack() = default;
+	};
 
-		this->data = data.data;
-		data.data = nullptr;
-	}
+	//////////////////////////////////////////////
+	//===== Singleton object datastructure =====//
+	//////////////////////////////////////////////
 
-	~DynamicObject();
-
-	//===== Protected functions =====//
-protected:
-	void resize();
-
-	//===== Private variables =====//
-private:
-	const unsigned int default_capacity = 4;
-	unsigned int capacity;
-	unsigned int size = 0;
-
-	T * data;
-};
-
-///////////////////////////////////////////////////
-//===== Dynamic Object class implementation =====//
-///////////////////////////////////////////////////
-
-template <class T>
-DynamicObject<T>::DynamicObject()
-{
-	capacity = default_capacity;
-	data = new T[capacity];
-}
-
-template <class T>
-DynamicObject<T>::DynamicObject(int size)
-{
-	capacity = size;
-	data = new T[capacity];
-}
-
-template <class T>
-DynamicObject<T>::DynamicObject(T * data, int size)
-{
-	capacity = size;
-	this->data = new T[capacity];
-
-	memcpy(this->data, data, size * sizeof(data[0]));
-}
-
-template <class T>
-unsigned int DynamicObject<T>::get_size()
-{
-	return size;
-}
-
-template <class T>
-void DynamicObject<T>::resize()
-{
-	if (size < capacity)
-		return;
-
-	T * aux = new T[capacity + default_capacity];
-	memcpy(aux, data, size * sizeof(T));
-
-	delete[] data;
-	data = aux;
-
-	capacity = capacity + default_capacity;
-}
-
-template <class T>
-T * DynamicObject<T>::get_all()
-{
-	return data;
-}
-
-template <class T>
-T DynamicObject<T>::get_one(unsigned int index)
-{
-	return data[index];
-}
-
-template <class T>
-void DynamicObject<T>::push(T item)
-{
-	resize();
-
-	data[size] = item;
-
-	size++;
-}
-
-template <class T>
-void DynamicObject<T>::push(T item, int index)
-{
-	resize();
-
-	data[index] = item;
-
-	if (!data[index])
-		size++;
-}
-
-template <class T>
-void DynamicObject<T>::push(T * item)
-{
-	for (int i = 0; i < sizeof(*item) / sizeof(item[0]); i++)
-		push(item[i]);
-}
-
-template <class T>
-DynamicObject<T>::~DynamicObject()
-{
-	delete[] data;
+	template <class T>
+	class Singleton
+	{
+	public:
+		static T & get_instance() { static T instance; return instance; }
+		Singleton() {};
+		Singleton(const Singleton &) = delete;
+		Singleton(Singleton &&) = delete;
+		Singleton operator = (const Singleton &) = delete;
+		Singleton operator = (Singleton &&) = delete;
+	};
 }

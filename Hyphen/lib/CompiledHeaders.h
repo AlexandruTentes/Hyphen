@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <tuple>
+#include <functional>
 
 //////////////////////////////////
 //===== Platform libraries =====//
