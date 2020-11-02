@@ -246,16 +246,20 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
 	using namespace Hyphen;
 
+#define POLL(T, e)	EventPoll::get_instance().event_poll[e.type] = true; 
+					//delete EventPoll::get_instance().event_array[e.type]; \
+					T * cpy = new T; \
+					cpy->copy(e); \
+					EventPoll::get_instance().event_array[e.type] = cpy;
+
 	switch (msg)
 	{
 	case WM_CREATE: //Event fired when the window has been created
 	{
 		LPCREATESTRUCTA lpcrstr = (LPCREATESTRUCTA) lparam;
 		WindowCreate create(lpcrstr->cx, lpcrstr->cy);
-
 		window_manager_instance.get_one_window(hwnd)->on_event<WindowCreate>(create);
 		window_manager_instance.get_one_window(hwnd)->create();
-
 		return 0;
 	}
 	case WM_ACTIVATE:
@@ -263,14 +267,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		if (!HIWORD(wparam)) //Check if window is minimized
 		{
 			//window_manager_instance.get_one_window(hwnd)->on_event();
-
 			window_manager_instance.get_one_window(hwnd)->is_minimized = false;
 			window_manager_instance.get_one_window(hwnd)->is_focused = true;
 		}
 		else
 		{
 			//window_manager_instance.get_one_window(hwnd)->on_event();
-
 			window_manager_instance.get_one_window(hwnd)->is_minimized = true;
 			window_manager_instance.get_one_window(hwnd)->is_focused = false;
 		}
@@ -280,47 +282,36 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	case WM_KEYDOWN:
 	{
 		KeyDown key_down(wparam);
-
+		POLL(KeyDown, key_down);
 		window_manager_instance.get_one_window(hwnd)->on_event<KeyDown>(key_down);
-
 		return 0;
 	}
 	case WM_KEYUP:
 	{
 		KeyUp key_up(wparam);
-
 		window_manager_instance.get_one_window(hwnd)->on_event<KeyUp>(key_up);
-
 		return 0;
 	}
 	case WM_SIZE:
 	{
 		WindowResize resize(LOWORD(lparam), HIWORD(lparam));
-
 		window_manager_instance.get_one_window(hwnd)->on_event<WindowResize>(resize);
 		window_manager_instance.get_one_window(hwnd)->resize();
-
 		return 0;
 	}
 	case WM_DESTROY: //Event fired when the window has been destroyed
 	{
 		WindowClose close;
-		
 		window_manager_instance.get_one_window(hwnd)->on_event<WindowClose>(close);
 		window_manager_instance.get_one_window(hwnd)->destroy();
-
 		PostQuitMessage(0); // Tells the window api that this window has requested to terminate
-
 		return 0;
 	}
 	case WM_MOUSEMOVE:
 	{
 		std::tuple<float, float> xy_tuple = ((Windows *)window_manager_instance.get_one_window(hwnd))->get_float_xy(GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam));
-
 		MouseMove mouse(std::get<0>(xy_tuple), std::get<1>(xy_tuple));
-
 		window_manager_instance.get_one_window(hwnd)->on_event<MouseMove>(mouse);
-
 		return 0;
 	}
 	default:

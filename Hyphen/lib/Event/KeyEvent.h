@@ -11,31 +11,23 @@ namespace Hyphen
 	{
 	public:
 		EVENT_MEMBER_SETTER(Key, KEY)
-		Key() {}
-		int get_key() { return key; };
-		virtual ~Key() = default;
-	protected:
 		Key(int key) : key(key) {};
+		int get_key() { return key; };
+	protected:
 		int key;
 	};
 
 	//===== Key pressed event =====//
-	class API KeyDown : public Key
+	struct API KeyDown : Key
 	{		
-	public:
 		EVENT_MEMBER_SETTER(KeyDown, KEYDOWN)
-		KeyDown() {}
 		KeyDown(int key) : Key(key) {};
-		virtual ~KeyDown() = default;
 	};
 
 	//===== Key released event =====//
-	class API KeyUp : public Key
+	struct API KeyUp : Key
 	{
-	public:
 		EVENT_MEMBER_SETTER(KeyUp, KEYUP)
-		KeyUp() {}
 		KeyUp(int key) : Key(key) {};
-		virtual ~KeyUp() = default;
 	};
 }

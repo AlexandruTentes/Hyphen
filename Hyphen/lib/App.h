@@ -5,6 +5,7 @@
 #include "Platform.h"
 #include "Window/Window.h"
 #include "Layer/LayerStack.h"
+#include "Math/UtilityFunctions.h"
 
 namespace Hyphen
 {

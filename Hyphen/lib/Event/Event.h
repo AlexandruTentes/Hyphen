@@ -4,28 +4,26 @@
 
 #include "../CompiledHeaders.h"
 #include "../Platform.h"
+#include "../Math/UtilityMacros.h"
 
 #pragma warning( disable : 4251 )
 
 namespace Hyphen
 {
-#define EVENT_MEMBER_SINGLETONIZE(T)	static T & get_instance() { static T instance; return instance; } \
-										T(const T &) = delete; \
-										T(T &&) = delete; \
-										T operator = (const T &) = delete; \
-										T operator = (T &&) = delete;
-										
-#define EVENT_MEMBER_SETTER(T, x)		std::function<void(T &)> callback = nullptr; \
-										static const EventType type = x; \
-										EventType get_type() override { return type; } \
-										EVENT_MEMBER_SINGLETONIZE(T)
+#define EVENT_MEMBER_SETTER(T, x)				std::function<void(T &)> callback = nullptr; \
+												static const EventType type = x; \
+												EventType get_type() override { return type; }; \
+												void copy(const T & other) { * this = other; } \
+												virtual ~T() = default; \
+												EVENT_MEMBER_PARTIAL_SINGLETONIZE(T)
 
 	enum EventType
 	{
-		NONE,
+		NONE = 0,
 		KEY, KEYDOWN, KEYUP,
 		MOUSE, MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSESCROLL, MOUSEMOVE,
-		WINDOWEVENT, WINDOWRESIZE, WINDOWCLOSE, WINDOWCREATE, WINDOWFOCUS, WINDOWLOSTFOCUS, WINDOWMOVE
+		WINDOWEVENT, WINDOWRESIZE, WINDOWCLOSE, WINDOWCREATE, WINDOWFOCUS, WINDOWLOSTFOCUS, WINDOWMOVE,
+		END
 	};
 
 	class API Event
@@ -33,5 +31,13 @@ namespace Hyphen
 	public:
 		virtual EventType get_type() { return NONE; }
 		virtual ~Event() = default;
+	};
+
+	class EventPoll
+	{
+	public:
+		EVENT_MEMBER_SINGLETONIZE(EventPoll)
+		bool event_poll[END - 1];
+		Event * event_array[END - 1];
 	};
 }

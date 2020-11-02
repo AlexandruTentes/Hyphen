@@ -4,6 +4,7 @@ namespace Hyphen
 {
 	void App::run()
 	{
+		KeyDown kd;
 		HyphenWindow * app_window = HyphenWindow::create();
 
 		if (!app_window->init())
@@ -12,6 +13,9 @@ namespace Hyphen
 		while (app_window->window->is_running)
 		{
 			app_window->window->update();
+
+			if (GetEvent(& kd))
+				std::cout << "POLLING WORKED " << std::endl;
 		}
 		
 		delete app_window;
