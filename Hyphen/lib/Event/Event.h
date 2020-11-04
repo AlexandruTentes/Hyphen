@@ -39,5 +39,10 @@ namespace Hyphen
 		EVENT_MEMBER_SINGLETONIZE(EventPoll)
 		bool event_poll[END - 1];
 		Event * event_array[END - 1];
+		virtual ~EventPoll() 
+		{
+			for (int i = 0; i < END - 1; i++)
+				if (event_array[i]) delete event_array[i];
+		};
 	};
 }

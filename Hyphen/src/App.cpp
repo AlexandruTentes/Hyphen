@@ -5,6 +5,7 @@ namespace Hyphen
 	void App::run()
 	{
 		KeyDown kd;
+		MouseMove mv;
 		HyphenWindow * app_window = HyphenWindow::create();
 
 		if (!app_window->init())
@@ -14,12 +15,14 @@ namespace Hyphen
 		{
 			app_window->window->update();
 
-			if (GetEvent(& kd))
-				std::cout << "POLLING WORKED " << std::endl;
+			if (poll_event(& kd))
+				std::cout << "POLING KEY: " << kd.get_key() << std::endl;
+
+			if (poll_event(&mv))
+				std::cout << "POLLING MOUSE: x: " << mv.get_x() << " y: " << mv.get_y() << std::endl;
 		}
 		
 		delete app_window;
-		std::cin.get();
 	}
 
 	void App::push_layer(Layer * layer)

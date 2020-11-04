@@ -246,10 +246,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
 	using namespace Hyphen;
 
-#define POLL(T, e)	EventPoll::get_instance().event_poll[e.type] = true; 
-					//delete EventPoll::get_instance().event_array[e.type]; \
-					T * cpy = new T; \
-					cpy->copy(e); \
+#define POLL(T, e)	EventPoll::get_instance().event_poll[e.type] = true; \
+					delete EventPoll::get_instance().event_array[T::type]; \
+					T * cpy = new T(); \
+					* cpy = e; \
 					EventPoll::get_instance().event_array[e.type] = cpy;
 
 	switch (msg)
@@ -260,6 +260,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		WindowCreate create(lpcrstr->cx, lpcrstr->cy);
 		window_manager_instance.get_one_window(hwnd)->on_event<WindowCreate>(create);
 		window_manager_instance.get_one_window(hwnd)->create();
+		POLL(WindowCreate, create)
 		return 0;
 	}
 	case WM_ACTIVATE:
@@ -282,14 +283,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	case WM_KEYDOWN:
 	{
 		KeyDown key_down(wparam);
-		POLL(KeyDown, key_down);
 		window_manager_instance.get_one_window(hwnd)->on_event<KeyDown>(key_down);
+		POLL(KeyDown, key_down)
 		return 0;
 	}
 	case WM_KEYUP:
 	{
 		KeyUp key_up(wparam);
 		window_manager_instance.get_one_window(hwnd)->on_event<KeyUp>(key_up);
+		POLL(KeyUp, key_up)
 		return 0;
 	}
 	case WM_SIZE:
@@ -297,6 +299,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		WindowResize resize(LOWORD(lparam), HIWORD(lparam));
 		window_manager_instance.get_one_window(hwnd)->on_event<WindowResize>(resize);
 		window_manager_instance.get_one_window(hwnd)->resize();
+		POLL(WindowResize, resize)
 		return 0;
 	}
 	case WM_DESTROY: //Event fired when the window has been destroyed
@@ -304,6 +307,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		WindowClose close;
 		window_manager_instance.get_one_window(hwnd)->on_event<WindowClose>(close);
 		window_manager_instance.get_one_window(hwnd)->destroy();
+		POLL(WindowClose, close)
 		PostQuitMessage(0); // Tells the window api that this window has requested to terminate
 		return 0;
 	}
@@ -312,6 +316,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		std::tuple<float, float> xy_tuple = ((Windows *)window_manager_instance.get_one_window(hwnd))->get_float_xy(GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam));
 		MouseMove mouse(std::get<0>(xy_tuple), std::get<1>(xy_tuple));
 		window_manager_instance.get_one_window(hwnd)->on_event<MouseMove>(mouse);
+		POLL(MouseMove, mouse)
 		return 0;
 	}
 	default:
