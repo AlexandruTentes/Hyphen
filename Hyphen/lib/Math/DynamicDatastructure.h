@@ -180,26 +180,10 @@ namespace Hyphen
 		Stack(unsigned int capacity) : DynamicObject() { max_capacity = capacity; };
 
 		void pop(unsigned int index) { remove(index); };
-		void pop() { remove(size - 1); };
+		void pop() { remove(size - 1, ); };
 		T peek(unsigned int index) { return (size == 0 ? nullptr : data[index]); };
 		T peek() { return (size == 0 ? nullptr : data[size - 1]); };
 
 		virtual ~Stack() = default;
-	};
-
-	//////////////////////////////////////////////
-	//===== Singleton object datastructure =====//
-	//////////////////////////////////////////////
-
-	template <class T>
-	class Singleton
-	{
-	public:
-		static T & get_instance() { static T instance; return instance; }
-		Singleton() {};
-		Singleton(const Singleton &) = delete;
-		Singleton(Singleton &&) = delete;
-		Singleton operator = (const Singleton &) = delete;
-		Singleton operator = (Singleton &&) = delete;
 	};
 }

@@ -1,10 +1,17 @@
 #include "../../lib/GUI/GUI.h"
 
+#ifdef GUI_H_
+
 namespace Hyphen
 {
 	void GUI::attach()
-	{
+	{/*
+		ImGui::CreateContext();
+		ImGui::StyleColorsDark();
 
+		
+
+		ImGui_ImplOpenGL3_Init("#version 410");*/
 	}
 
 	void GUI::detach()
@@ -13,8 +20,12 @@ namespace Hyphen
 	}
 
 	void GUI::update()
-	{
+	{/*
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui::NewFrame();
 
+		ImGui::Render();
+		*/
 	}
 
 	void GUI::event(Event & e)
@@ -22,3 +33,5 @@ namespace Hyphen
 
 	}
 }
+
+#endif

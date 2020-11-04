@@ -24,6 +24,8 @@ namespace Hyphen
 		void push_overlay(Layer * overlay);
 		void pop_layer(Layer * layer);
 		void pop_overlay(Layer * overlay);
+		void pop_all_layers();
+		void pop_all_overlays();
 
 		Stack<Layer *> & get_layers();
 		Stack<Layer *> & get_overlays();

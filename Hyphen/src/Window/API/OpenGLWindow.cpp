@@ -13,7 +13,9 @@ namespace Hyphen
 	{
 		//===== Casting the parent class instance as the child Windows window =====//
 		window_windows = static_cast<Windows *>(window);
-
+		handler = window_windows->get_handler();
+		gui = new GUI();
+		gui->set_handler(handler);
 		bool basic_window_init = window->init();
 
 		if (!(hglrc = wglCreateContext(window_windows->hdc)))
@@ -29,9 +31,8 @@ namespace Hyphen
 			window_windows->kill_window();
 			return false;
 		}
-
+		stack.push_overlay(gui);
 		window->show();
-
 		return basic_window_init;
 	}
 
@@ -46,6 +47,8 @@ namespace Hyphen
 
 	OpenGLWindowWindows::~OpenGLWindowWindows()
 	{
+		stack.pop_overlay(gui);
+
 		if (hglrc && //In case there is a rendering context
 			!wglMakeCurrent(NULL, NULL) && //Attempt to free the rendering context from the device context
 			!wglDeleteContext(hglrc)) //Attempt to delete the rendering context

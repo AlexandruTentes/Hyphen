@@ -7,18 +7,17 @@ class Sandbox : public Hyphen::App
 public:
 	Sandbox() 
 	{
-		push_layer(layer1);
-		push_layer(layer2);
+		layer_stack.push_layer(& layer1);
+		layer_stack.push_layer(& layer2);
 	};
 
 	virtual ~Sandbox()
 	{
-		delete layer1;
-		delete layer2;
+		layer_stack.pop_all_layers();
 	};
 private:
-	LayerExample * layer1 = new LayerExample();
-	AnotherLayerExample * layer2 = new AnotherLayerExample();
+	LayerExample layer1;
+	AnotherLayerExample layer2;
 	UserDefinedEvents e;
 };
 

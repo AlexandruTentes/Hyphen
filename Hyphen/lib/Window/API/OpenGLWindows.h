@@ -13,6 +13,7 @@ namespace Hyphen
 	{
 	public:
 		bool init() override;
+		HWND get_handler() { return handler; }
 
 		//===== Nesting deconstructors =====//
 		virtual ~OpenGLWindowWindows();
@@ -24,6 +25,7 @@ namespace Hyphen
 	private:
 		Windows * window_windows;
 		HGLRC hglrc = NULL;	//Rendering device context
+		HWND handler = NULL;
 	};
 }
 

@@ -5,6 +5,8 @@
 #include "../CompiledHeaders.h"
 #include "Platform/Windows.h"
 #include "WindowAPI.h"
+#include "../Layer/LayerStack.h"
+#include "../GUI/GUI.h"
 
 namespace Hyphen
 {
@@ -18,6 +20,8 @@ namespace Hyphen
 		virtual bool init() = 0;
 
 		virtual ~HyphenWindow() = default;
-	private:
+	protected:
+		GUI * gui;
+		LayerStack & stack = LayerStack::get_instance();
 	};
 }
