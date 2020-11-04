@@ -15,6 +15,7 @@ namespace Hyphen
 
 		virtual void attach() {};
 		virtual void detach() {};
+		virtual void update() {};
 		virtual void event(Event & event) {};
 
 		void set_id(unsigned short int id) { this->id = id; };

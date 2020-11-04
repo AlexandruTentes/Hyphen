@@ -23,7 +23,7 @@ public:
 	void event(Hyphen::Event & event) override
 	{
 		DISPATCH(AnotherLayerExample::mouse_move_event, event);
-		//DISPATCH(AnotherLayerExample::key_down_event, event);
+		DISPATCH(AnotherLayerExample::key_down_event, event);
 	}
 
 	void key_down_event(Hyphen::KeyDown & e)

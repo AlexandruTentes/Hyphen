@@ -15,6 +15,9 @@ namespace Hyphen
 		{
 			app_window->window->update();
 
+			for (unsigned int i = 0; i < layer_stack.get_overlays().get_size(); i++)
+				layer_stack.get_overlays().get_one(i)->update();
+
 			if (poll_event(& kd))
 				std::cout << "POLING KEY: " << kd.get_key() << std::endl;
 
