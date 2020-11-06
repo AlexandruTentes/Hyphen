@@ -8,6 +8,7 @@
 
 #include "../Layer/Layer.h"
 #include "../../thirdparty/imgui/imgui_impl_opengl3.h"
+#include "../../thirdparty/imgui/imgui_impl_win32.h"
 
 //For now the GUI works only for windows machines only
 

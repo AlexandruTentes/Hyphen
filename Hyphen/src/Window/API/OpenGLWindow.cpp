@@ -13,10 +13,9 @@ namespace Hyphen
 	{
 		//===== Casting the parent class instance as the child Windows window =====//
 		window_windows = static_cast<Windows *>(window);
+		bool basic_window_init = window->init();
 		handler = window_windows->get_handler();
 		gui = new GUI();
-		gui->set_handler(handler);
-		bool basic_window_init = window->init();
 
 		if (!(hglrc = wglCreateContext(window_windows->hdc)))
 		{
@@ -31,18 +30,12 @@ namespace Hyphen
 			window_windows->kill_window();
 			return false;
 		}
-		stack.push_overlay(gui);
+		
+		glewInit();
 		window->show();
+		gui->set_handler(handler);
+		stack.push_overlay(gui);
 		return basic_window_init;
-	}
-
-	GLvoid OpenGLWindowWindows::resize_scene(GLsizei width, GLsizei height)
-	{
-		//Branchless if(height == 0) then height = 1, else retian previous height
-		//division by 0 protection!
-		height = (height != 0) * height + 1 * (height == 0);
-
-		glViewport(0, 0, width, height);
 	}
 
 	OpenGLWindowWindows::~OpenGLWindowWindows()

@@ -30,6 +30,8 @@ namespace Hyphen
 
 	void Windows::destroy()
 	{
+		layer_stack.pop_all_layers();
+		layer_stack.pop_all_overlays();
 		is_running = false;
 		window_manager_instance.remove(handler);
 	}
@@ -49,8 +51,10 @@ namespace Hyphen
 
 	void Windows::resize()
 	{
-		//===== Redraws the content of the window =====//
-		UpdateWindow(handler);
+		//Branchless if(specs.height == 0) then specs.height = 1, else retain previous height
+		//division by 0 protection!
+		specs.height = (specs.height != 0) * specs.height + 1 * (specs.height == 0);
+		glViewport(0, 0, specs.width, specs.height);
 	}
 
 	void Windows::kill_window()
@@ -83,6 +87,8 @@ namespace Hyphen
 			DispatchMessage(& msg);
 		}
 
+		glLoadIdentity();
+		SwapBuffers(hdc);
 		//===== Prevent cpu throttle =====//
 		Sleep(0);
 	}
@@ -118,8 +124,9 @@ namespace Hyphen
 		pixel_format.nVersion = 1;
 		pixel_format.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
 		pixel_format.iPixelType = PFD_TYPE_RGBA;
-		pixel_format.cColorBits = specs.color_bits;
-		pixel_format.cDepthBits = specs.depth_bits;
+		pixel_format.cColorBits = 32;
+		pixel_format.cDepthBits = 32;
+		pixel_format.cAlphaBits = 8;
 
 		//===== Registering the window details for validation =====//
 		if (!RegisterClassEx(& wcex))
@@ -136,7 +143,7 @@ namespace Hyphen
 			device_screen_settings.dmSize = sizeof(device_screen_settings);
 			device_screen_settings.dmPelsWidth = specs.width;
 			device_screen_settings.dmPelsHeight = specs.height;
-			device_screen_settings.dmBitsPerPel = specs.color_bits;
+			device_screen_settings.dmBitsPerPel = pixel_format.cColorBits;
 			device_screen_settings.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
 
 			//===== Attempt to set the mode, where CDS_FULLSCREEN gets rid of the task bar =====//
@@ -282,14 +289,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	}
 	case WM_KEYDOWN:
 	{
-		KeyDown key_down(wparam);
+		KeyDown key_down(LOWORD(wparam));
 		window_manager_instance.get_one_window(hwnd)->on_event<KeyDown>(key_down);
 		POLL(KeyDown, key_down)
 		return 0;
 	}
 	case WM_KEYUP:
 	{
-		KeyUp key_up(wparam);
+		KeyUp key_up(LOWORD(wparam));
 		window_manager_instance.get_one_window(hwnd)->on_event<KeyUp>(key_up);
 		POLL(KeyUp, key_up)
 		return 0;

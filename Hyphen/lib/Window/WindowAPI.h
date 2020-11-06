@@ -15,16 +15,11 @@ namespace Hyphen
 	{
 		unsigned short int width;
 		unsigned short int height;
-		unsigned short int color_bits;
-		unsigned short int depth_bits;
 		std::string title;
 
 		WindowSpecs(const std::string & title = "Dev Window", 
-			unsigned short int width = 1200, unsigned short int height = 700, 
-			unsigned short int color_bits = 32, unsigned short int depth_bits = 32) :
-			title(title), width(width), height(height), color_bits(color_bits), 
-			depth_bits(depth_bits)
-		{}
+			unsigned short int width = 1200, unsigned short int height = 7002) :
+			title(title), width(width), height(height) {}
 	};
 
 	class Window
@@ -49,16 +44,15 @@ namespace Hyphen
 		}
 		
 		virtual ~Window() = default;
-
 	public:
 		bool is_running = false;
 		bool is_vsync = false;
 		bool is_minimized = false;
 		bool is_fullscreen = false;
 		bool is_focused = true;
-
-	private:
+	protected:
 		LayerStack & layer_stack = LayerStack::get_instance();
+	private:
 		Dispatcher dispatcher;
 	};
 }
