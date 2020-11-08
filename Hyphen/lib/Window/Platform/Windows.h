@@ -21,6 +21,11 @@ Hyphen::WindowManager<HWND>::get_instance();
 
 namespace Hyphen
 {
+	enum MouseKeyMap
+	{
+		LEFT_BTN, RIGHT_BTN, MIDDLE_BTN
+	};
+
 	class Windows : public Window
 	{
 	public:

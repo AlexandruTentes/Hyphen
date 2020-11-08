@@ -107,7 +107,7 @@ namespace Hyphen
 
 		bool is_full() { return max_capacity == 0 ? false : size == max_capacity; };
 		bool is_empty() { return size == 0; };
-		T get_one(unsigned int index) { return data[index]; };
+		T get_one(unsigned int index) { return size == 0 || index >= size ? nullptr : data[index]; };
 		T * get_all() { return data; };
 		unsigned int get_size() { return size; };
 
@@ -181,8 +181,8 @@ namespace Hyphen
 
 		void pop(unsigned int index) { remove(index); };
 		void pop() { remove(size - 1, ); };
-		T peek(unsigned int index) { return (size == 0 ? nullptr : data[index]); };
-		T peek() { return (size == 0 ? nullptr : data[size - 1]); };
+		T peek(unsigned int index) { return get_one(index); };
+		T peek() { return get_one(size - 1); };
 
 		virtual ~Stack() = default;
 	};

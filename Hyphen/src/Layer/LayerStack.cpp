@@ -9,7 +9,7 @@ namespace Hyphen
 		layer->attach();
 	}
 
-	void LayerStack::push_overlay(Layer * overlay)
+	void LayerStack::push_overlay(Overlay * overlay)
 	{
 		overlay->set_id(this->overlay.get_size() + 1);
 		this->overlay.push(overlay);
@@ -30,7 +30,7 @@ namespace Hyphen
 		layer->detach();
 	}
 
-	void LayerStack::pop_overlay(Layer * overlay)
+	void LayerStack::pop_overlay(Overlay * overlay)
 	{
 		if (overlay == nullptr)
 			return;
@@ -67,7 +67,7 @@ namespace Hyphen
 		return layer;
 	}
 
-	Stack<Layer *> & LayerStack::get_overlays()
+	Stack<Overlay *> & LayerStack::get_overlays()
 	{
 		return overlay;
 	}

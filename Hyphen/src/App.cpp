@@ -14,16 +14,16 @@ namespace Hyphen
 		while (app_window->window->is_running)
 		{
 			glClear(GL_COLOR_BUFFER_BIT);
-			glClearColor(1.0, 0.0, 0.0, 1.0);
+			glClearColor(0.5, 0.25, 0.5, 1.0);
 
-			for (unsigned int i = 0; i < layer_stack.get_overlays().get_size(); i++)
-				layer_stack.get_overlays().get_one(i)->update();
-
-			if (poll_event(& kd))
+			if (poll_event(&kd))
 				std::cout << "POLING KEY: " << kd.get_key() << std::endl;
 
 			if (poll_event(&mv))
 				std::cout << "POLLING MOUSE: x: " << mv.get_x() << " y: " << mv.get_y() << std::endl;
+
+			for (unsigned int i = 0; i < layer_stack.get_overlays().get_size(); i++)
+				layer_stack.get_overlays().get_one(i)->update();
 
 			app_window->window->update();
 		}

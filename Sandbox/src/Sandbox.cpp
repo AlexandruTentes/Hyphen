@@ -7,7 +7,6 @@ class Sandbox : public Hyphen::App
 public:
 	Sandbox() 
 	{
-		layer_stack.push_layer(& layer1);
 		layer_stack.push_layer(& layer2);
 	};
 
@@ -16,7 +15,6 @@ public:
 		layer_stack.pop_all_layers();
 	};
 private:
-	LayerExample layer1;
 	AnotherLayerExample layer2;
 	UserDefinedEvents e;
 };

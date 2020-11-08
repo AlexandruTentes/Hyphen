@@ -33,7 +33,7 @@ namespace Hyphen
 		
 		glewInit();
 		window->show();
-		gui->set_handler(handler);
+		gui->handler = handler;
 		stack.push_overlay(gui);
 		return basic_window_init;
 	}

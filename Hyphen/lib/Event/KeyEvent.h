@@ -30,4 +30,10 @@ namespace Hyphen
 		EVENT_MEMBER_SETTER(KeyUp, KEYUP)
 		KeyUp(int key) : Key(key) {};
 	};
+
+	struct API KeyTyped : Key
+	{
+		EVENT_MEMBER_SETTER(KeyTyped, KEYTYPED)
+		KeyTyped(int key) : Key(key) {};
+	};
 }

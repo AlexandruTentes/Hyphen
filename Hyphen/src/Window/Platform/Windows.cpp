@@ -326,6 +326,48 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		POLL(MouseMove, mouse)
 		return 0;
 	}
+	case WM_LBUTTONDOWN:
+	{
+		MouseButtonDown button((float)LOWORD(lparam), (float)HIWORD(lparam), LEFT_BTN);
+		window_manager_instance.get_one_window(hwnd)->on_event<MouseButtonDown>(button);
+		POLL(MouseButtonDown, button)
+		return 0;
+	}
+	case WM_LBUTTONUP:
+	{
+		MouseButtonUp button((float)LOWORD(lparam), (float)HIWORD(lparam), LEFT_BTN);
+		window_manager_instance.get_one_window(hwnd)->on_event<MouseButtonUp>(button);
+		POLL(MouseButtonUp, button)
+		return 0;
+	}
+	case WM_RBUTTONDOWN:
+	{
+		MouseButtonDown button((float)LOWORD(lparam), (float)HIWORD(lparam), RIGHT_BTN);
+		window_manager_instance.get_one_window(hwnd)->on_event<MouseButtonDown>(button);
+		POLL(MouseButtonDown, button)
+		return 0;
+	}
+	case WM_RBUTTONUP:
+	{
+		MouseButtonUp button((float)LOWORD(lparam), (float)HIWORD(lparam), RIGHT_BTN);
+		window_manager_instance.get_one_window(hwnd)->on_event<MouseButtonUp>(button);
+		POLL(MouseButtonUp, button)
+		return 0;
+	}
+	case WM_MOUSEWHEEL:
+	{
+		MouseScroll scroll(0, HIWORD(wparam) == 120 ? (float) 0.5 : (float) -0.5);
+		window_manager_instance.get_one_window(hwnd)->on_event<MouseScroll>(scroll);
+		POLL(MouseScroll, scroll)
+		return 0;
+	}
+	case WM_CHAR:
+	{
+		KeyTyped key(LOWORD(wparam));
+		window_manager_instance.get_one_window(hwnd)->on_event<KeyTyped>(key);
+		POLL(KeyTyped, key)
+		return 0;
+	}
 	default:
 		return DefWindowProc(hwnd, msg, wparam, lparam);
 	}

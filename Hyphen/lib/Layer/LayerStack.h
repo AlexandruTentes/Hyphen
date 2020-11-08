@@ -6,6 +6,7 @@
 #include "../Platform.h"
 #include "../Math/DynamicDatastructure.h"
 #include "Layer.h"
+#include "Overlay.h"
 
 namespace Hyphen
 {
@@ -21,18 +22,18 @@ namespace Hyphen
 		LayerStack(LayerStack &&) = delete;
 
 		void push_layer(Layer * layer);
-		void push_overlay(Layer * overlay);
+		void push_overlay(Overlay * overlay);
 		void pop_layer(Layer * layer);
-		void pop_overlay(Layer * overlay);
+		void pop_overlay(Overlay * overlay);
 		void pop_all_layers();
 		void pop_all_overlays();
 
 		Stack<Layer *> & get_layers();
-		Stack<Layer *> & get_overlays();
+		Stack<Overlay *> & get_overlays();
 
 		virtual ~LayerStack();
 	private:
 		Stack<Layer *> layer;
-		Stack<Layer *> overlay;
+		Stack<Overlay *> overlay;
 	};
 }

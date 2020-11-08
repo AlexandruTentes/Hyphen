@@ -37,8 +37,22 @@ namespace Hyphen
 
 		template <class T> void on_event(Event & e)
 		{
-			for (unsigned int i = 0; i < layer_stack.get_layers().get_size(); i++)
-				layer_stack.get_layers().get_one(i)->event(e);
+			bool ignore = false;
+
+			//Handle top of the stack, then propagate cascade-like if not handled
+			for (unsigned int i = layer_stack.get_overlays().get_size(); i >= 1; i--)
+			{
+				if (layer_stack.get_overlays().peek(i - 1)->get_status())
+				{
+					layer_stack.get_overlays().peek(i - 1)->event(e);
+					ignore = true;
+					break;
+				}
+			}
+
+			if(!ignore)
+				//Only handle the top of the stack element
+				layer_stack.get_layers().peek()->event(e);
 
 			dispatcher.dispatch<T>(e, T::get_instance().callback);
 		}

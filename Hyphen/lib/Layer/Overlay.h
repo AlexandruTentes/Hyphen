@@ -1,6 +1,6 @@
 #pragma once
 
-#define LAYER_H_
+#define OVERLAY_H_
 
 #include "../CompiledHeaders.h"
 #include "../Platform.h"
@@ -8,20 +8,23 @@
 
 namespace Hyphen
 {
-	class API Layer : public Listener
+	class Overlay : public Listener
 	{
 	public:
-		Layer() {};
-
+		Overlay() {};
 		virtual void attach() {};
 		virtual void detach() {};
+		virtual void update() {};
 		virtual void event(Event & event) {};
 
 		void set_id(unsigned short int id) { this->id = id; };
 		unsigned int get_id() { return id; };
+		bool get_status() { return handled; }
 
-		virtual ~Layer() = default;
-	public:
+		virtual ~Overlay() = default;
+	private:
 		unsigned int id = 0;
+	protected:
+		bool handled = false;
 	};
 }
