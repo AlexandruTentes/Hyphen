@@ -11,58 +11,40 @@ namespace Hyphen
 	{
 	public:
 		EVENT_MEMBER_SETTER(Mouse, MOUSE)
-		Mouse() {}
+		Mouse(float x, float y, int button) : x(x), y(y), button(button) {};
 		float get_x() { return x; };
 		float get_y() { return y; };
-		virtual ~Mouse() = default;
+		int get_button() { return button; };
 	protected:
-		Mouse(float x, float y) : x(x), y(y) {};
 		float x, y;
+		int button = NULL;
 	};
 
 	//===== Mouse move event =====//
-	class API MouseMove : public Mouse
+	struct API MouseMove : Mouse
 	{
-	public:
 		EVENT_MEMBER_SETTER(MouseMove, MOUSEMOVE)
-		MouseMove() {}
-		MouseMove(float x, float y) : Mouse(x, y) {};
-		virtual ~MouseMove() = default;
+		MouseMove(float x, float y) : Mouse(x, y, NULL) {};
 	};
 
 	//===== Mouse scroll event =====//
-	class API MouseScroll : public Mouse
+	struct API MouseScroll : Mouse
 	{
-	public:
 		EVENT_MEMBER_SETTER(MouseScroll, MOUSESCROLL)
-		MouseScroll() {}
-		MouseScroll(float x_offset, float y_offset) : Mouse(x_offset, y_offset) {};
-		virtual ~MouseScroll() = default;
+		MouseScroll(float x_offset, float y_offset) : Mouse(x_offset, y_offset, NULL) {};
 	};
 
 	//===== Mouse button pressed event =====//
-	class API MouseButtonDown : public Mouse
+	struct API MouseButtonDown : Mouse
 	{
-	public:
 		EVENT_MEMBER_SETTER(MouseButtonDown, MOUSEBUTTONDOWN)
-		MouseButtonDown() {}
-		MouseButtonDown(float x, float y, int button) : Mouse(x, y), button(button) {};
-		int get_button() { return button; };
-		virtual ~MouseButtonDown() = default;
-	protected:
-		int button;
+		MouseButtonDown(float x, float y, int button) : Mouse(x, y, button) {};
 	};
 
 	//===== Mouse button released event =====//
-	class API MouseButtonUp : public Mouse
+	struct API MouseButtonUp : Mouse
 	{
-	public:
 		EVENT_MEMBER_SETTER(MouseButtonUp, MOUSEBUTTONUP)
-		MouseButtonUp() {}
-		MouseButtonUp(float x, float y, int button) : Mouse(x, y), button(button) {};
-		int get_button() { return button; };
-		virtual ~MouseButtonUp() = default;
-	protected:
-		int button;
+		MouseButtonUp(float x, float y, int button) : Mouse(x, y, button) {};
 	};
 }

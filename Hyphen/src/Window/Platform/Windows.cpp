@@ -30,6 +30,8 @@ namespace Hyphen
 
 	void Windows::destroy()
 	{
+		layer_stack.pop_all_layers();
+		layer_stack.pop_all_overlays();
 		is_running = false;
 		window_manager_instance.remove(handler);
 	}
@@ -49,8 +51,10 @@ namespace Hyphen
 
 	void Windows::resize()
 	{
-		//===== Redraws the content of the window =====//
-		UpdateWindow(handler);
+		//Branchless if(specs.height == 0) then specs.height = 1, else retain previous height
+		//division by 0 protection!
+		specs.height = (specs.height != 0) * specs.height + 1 * (specs.height == 0);
+		glViewport(0, 0, specs.width, specs.height);
 	}
 
 	void Windows::kill_window()
@@ -83,6 +87,8 @@ namespace Hyphen
 			DispatchMessage(& msg);
 		}
 
+		glLoadIdentity();
+		SwapBuffers(hdc);
 		//===== Prevent cpu throttle =====//
 		Sleep(0);
 	}
@@ -118,8 +124,9 @@ namespace Hyphen
 		pixel_format.nVersion = 1;
 		pixel_format.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
 		pixel_format.iPixelType = PFD_TYPE_RGBA;
-		pixel_format.cColorBits = specs.color_bits;
-		pixel_format.cDepthBits = specs.depth_bits;
+		pixel_format.cColorBits = 32;
+		pixel_format.cDepthBits = 32;
+		pixel_format.cAlphaBits = 8;
 
 		//===== Registering the window details for validation =====//
 		if (!RegisterClassEx(& wcex))
@@ -136,7 +143,7 @@ namespace Hyphen
 			device_screen_settings.dmSize = sizeof(device_screen_settings);
 			device_screen_settings.dmPelsWidth = specs.width;
 			device_screen_settings.dmPelsHeight = specs.height;
-			device_screen_settings.dmBitsPerPel = specs.color_bits;
+			device_screen_settings.dmBitsPerPel = pixel_format.cColorBits;
 			device_screen_settings.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
 
 			//===== Attempt to set the mode, where CDS_FULLSCREEN gets rid of the task bar =====//
@@ -246,16 +253,21 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
 	using namespace Hyphen;
 
+#define POLL(T, e)	EventPoll::get_instance().event_poll[e.type] = true; \
+					delete EventPoll::get_instance().event_array[T::type]; \
+					T * cpy = new T(); \
+					* cpy = e; \
+					EventPoll::get_instance().event_array[e.type] = cpy;
+
 	switch (msg)
 	{
 	case WM_CREATE: //Event fired when the window has been created
 	{
 		LPCREATESTRUCTA lpcrstr = (LPCREATESTRUCTA) lparam;
 		WindowCreate create(lpcrstr->cx, lpcrstr->cy);
-
 		window_manager_instance.get_one_window(hwnd)->on_event<WindowCreate>(create);
 		window_manager_instance.get_one_window(hwnd)->create();
-
+		POLL(WindowCreate, create)
 		return 0;
 	}
 	case WM_ACTIVATE:
@@ -263,14 +275,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 		if (!HIWORD(wparam)) //Check if window is minimized
 		{
 			//window_manager_instance.get_one_window(hwnd)->on_event();
-
 			window_manager_instance.get_one_window(hwnd)->is_minimized = false;
 			window_manager_instance.get_one_window(hwnd)->is_focused = true;
 		}
 		else
 		{
 			//window_manager_instance.get_one_window(hwnd)->on_event();
-
 			window_manager_instance.get_one_window(hwnd)->is_minimized = true;
 			window_manager_instance.get_one_window(hwnd)->is_focused = false;
 		}
@@ -279,48 +289,83 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	}
 	case WM_KEYDOWN:
 	{
-		KeyDown key_down(wparam);
-
+		KeyDown key_down(LOWORD(wparam));
 		window_manager_instance.get_one_window(hwnd)->on_event<KeyDown>(key_down);
-
+		POLL(KeyDown, key_down)
 		return 0;
 	}
 	case WM_KEYUP:
 	{
-		KeyUp key_up(wparam);
-
+		KeyUp key_up(LOWORD(wparam));
 		window_manager_instance.get_one_window(hwnd)->on_event<KeyUp>(key_up);
-
+		POLL(KeyUp, key_up)
 		return 0;
 	}
 	case WM_SIZE:
 	{
 		WindowResize resize(LOWORD(lparam), HIWORD(lparam));
-
 		window_manager_instance.get_one_window(hwnd)->on_event<WindowResize>(resize);
 		window_manager_instance.get_one_window(hwnd)->resize();
-
+		POLL(WindowResize, resize)
 		return 0;
 	}
 	case WM_DESTROY: //Event fired when the window has been destroyed
 	{
 		WindowClose close;
-		
 		window_manager_instance.get_one_window(hwnd)->on_event<WindowClose>(close);
 		window_manager_instance.get_one_window(hwnd)->destroy();
-
+		POLL(WindowClose, close)
 		PostQuitMessage(0); // Tells the window api that this window has requested to terminate
-
 		return 0;
 	}
 	case WM_MOUSEMOVE:
 	{
 		std::tuple<float, float> xy_tuple = ((Windows *)window_manager_instance.get_one_window(hwnd))->get_float_xy(GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam));
-
 		MouseMove mouse(std::get<0>(xy_tuple), std::get<1>(xy_tuple));
-
 		window_manager_instance.get_one_window(hwnd)->on_event<MouseMove>(mouse);
-
+		POLL(MouseMove, mouse)
+		return 0;
+	}
+	case WM_LBUTTONDOWN:
+	{
+		MouseButtonDown button((float)LOWORD(lparam), (float)HIWORD(lparam), LEFT_BTN);
+		window_manager_instance.get_one_window(hwnd)->on_event<MouseButtonDown>(button);
+		POLL(MouseButtonDown, button)
+		return 0;
+	}
+	case WM_LBUTTONUP:
+	{
+		MouseButtonUp button((float)LOWORD(lparam), (float)HIWORD(lparam), LEFT_BTN);
+		window_manager_instance.get_one_window(hwnd)->on_event<MouseButtonUp>(button);
+		POLL(MouseButtonUp, button)
+		return 0;
+	}
+	case WM_RBUTTONDOWN:
+	{
+		MouseButtonDown button((float)LOWORD(lparam), (float)HIWORD(lparam), RIGHT_BTN);
+		window_manager_instance.get_one_window(hwnd)->on_event<MouseButtonDown>(button);
+		POLL(MouseButtonDown, button)
+		return 0;
+	}
+	case WM_RBUTTONUP:
+	{
+		MouseButtonUp button((float)LOWORD(lparam), (float)HIWORD(lparam), RIGHT_BTN);
+		window_manager_instance.get_one_window(hwnd)->on_event<MouseButtonUp>(button);
+		POLL(MouseButtonUp, button)
+		return 0;
+	}
+	case WM_MOUSEWHEEL:
+	{
+		MouseScroll scroll(0, HIWORD(wparam) == 120 ? (float) 0.5 : (float) -0.5);
+		window_manager_instance.get_one_window(hwnd)->on_event<MouseScroll>(scroll);
+		POLL(MouseScroll, scroll)
+		return 0;
+	}
+	case WM_CHAR:
+	{
+		KeyTyped key(LOWORD(wparam));
+		window_manager_instance.get_one_window(hwnd)->on_event<KeyTyped>(key);
+		POLL(KeyTyped, key)
 		return 0;
 	}
 	default:

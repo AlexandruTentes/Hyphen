@@ -9,7 +9,7 @@ namespace Hyphen
 		layer->attach();
 	}
 
-	void LayerStack::push_overlay(Layer * overlay)
+	void LayerStack::push_overlay(Overlay * overlay)
 	{
 		overlay->set_id(this->overlay.get_size() + 1);
 		this->overlay.push(overlay);
@@ -18,6 +18,9 @@ namespace Hyphen
 
 	void LayerStack::pop_layer(Layer * layer)
 	{
+		if (layer == nullptr)
+			return;
+
 		unsigned int index = layer->get_id();
 
 		if (index == 0)
@@ -27,8 +30,11 @@ namespace Hyphen
 		layer->detach();
 	}
 
-	void LayerStack::pop_overlay(Layer * overlay)
+	void LayerStack::pop_overlay(Overlay * overlay)
 	{
+		if (overlay == nullptr)
+			return;
+
 		unsigned int index = overlay->get_id();
 
 		if (index == 0)
@@ -38,22 +44,37 @@ namespace Hyphen
 		overlay->detach();
 	}
 
+	void LayerStack::pop_all_layers()
+	{
+		if (layer.get_size() < 1)
+			return;
+
+		for (unsigned int i = layer.get_size(); i >= 1; i--)
+			layer.pop(i - 1);
+	}
+
+	void LayerStack::pop_all_overlays()
+	{
+		if (overlay.get_size() < 1)
+			return;
+
+		for (unsigned int i = overlay.get_size(); i >= 1; i--)
+			overlay.pop(i - 1);
+	}
+
 	Stack<Layer *> & LayerStack::get_layers()
 	{
 		return layer;
 	}
 
-	Stack<Layer *> & LayerStack::get_overlays()
+	Stack<Overlay *> & LayerStack::get_overlays()
 	{
 		return overlay;
 	}
 
 	LayerStack::~LayerStack()
 	{
-		for (unsigned int i = 0; i < layer.get_size(); i++)
-			delete layer.get_one(i);
-
-		for (unsigned int i = 0; i < overlay.get_size(); i++)
-			delete overlay.get_one(i);
+		pop_all_layers();
+		pop_all_overlays();
 	}
 }

@@ -21,6 +21,11 @@ Hyphen::WindowManager<HWND>::get_instance();
 
 namespace Hyphen
 {
+	enum MouseKeyMap
+	{
+		LEFT_BTN, RIGHT_BTN, MIDDLE_BTN
+	};
+
 	class Windows : public Window
 	{
 	public:
@@ -36,6 +41,7 @@ namespace Hyphen
 		void window_msg_handler();
 		void kill_window();
 		std::tuple<float, float> get_float_xy(int x, int y);
+		HWND get_handler() { return handler; }
 
 		virtual ~Windows();
 

@@ -5,6 +5,7 @@
 #include "Platform.h"
 #include "Window/Window.h"
 #include "Layer/LayerStack.h"
+#include "Math/UtilityFunctions.h"
 
 namespace Hyphen
 {
@@ -13,13 +14,8 @@ namespace Hyphen
 	public:
 		void run();
 
-		void push_layer(Layer * layer);
-		void push_overlay(Layer* overlay);
-		void pop_layer(Layer * layer);
-		void pop_overlay(Layer* overlay);
-
 		virtual ~App() = default;
-	private:
+	protected:
 		LayerStack & layer_stack = LayerStack::get_instance();
 	};
 

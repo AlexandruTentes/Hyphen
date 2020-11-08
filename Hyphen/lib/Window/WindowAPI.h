@@ -15,16 +15,11 @@ namespace Hyphen
 	{
 		unsigned short int width;
 		unsigned short int height;
-		unsigned short int color_bits;
-		unsigned short int depth_bits;
 		std::string title;
 
 		WindowSpecs(const std::string & title = "Dev Window", 
-			unsigned short int width = 1200, unsigned short int height = 700, 
-			unsigned short int color_bits = 32, unsigned short int depth_bits = 32) :
-			title(title), width(width), height(height), color_bits(color_bits), 
-			depth_bits(depth_bits)
-		{}
+			unsigned short int width = 1200, unsigned short int height = 7002) :
+			title(title), width(width), height(height) {}
 	};
 
 	class Window
@@ -42,23 +37,36 @@ namespace Hyphen
 
 		template <class T> void on_event(Event & e)
 		{
-			for (unsigned int i = 0; i < layer_stack.get_layers().get_size(); i++)
-				layer_stack.get_layers().get_one(i)->event(e);
+			bool ignore = false;
+
+			//Handle top of the stack, then propagate cascade-like if not handled
+			for (unsigned int i = layer_stack.get_overlays().get_size(); i >= 1; i--)
+			{
+				if (layer_stack.get_overlays().peek(i - 1)->get_status())
+				{
+					layer_stack.get_overlays().peek(i - 1)->event(e);
+					ignore = true;
+					break;
+				}
+			}
+
+			if(!ignore)
+				//Only handle the top of the stack element
+				layer_stack.get_layers().peek()->event(e);
 
 			dispatcher.dispatch<T>(e, T::get_instance().callback);
 		}
 		
 		virtual ~Window() = default;
-
 	public:
 		bool is_running = false;
 		bool is_vsync = false;
 		bool is_minimized = false;
 		bool is_fullscreen = false;
 		bool is_focused = true;
-
-	private:
+	protected:
 		LayerStack & layer_stack = LayerStack::get_instance();
+	private:
 		Dispatcher dispatcher;
 	};
 }
