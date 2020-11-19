@@ -5,6 +5,9 @@
 #include <map>
 #include <tuple>
 #include <functional>
+#include <fstream>
+
+#include "GlobalVariables.h"
 
 //////////////////////////////////
 //===== Platform libraries =====//
@@ -16,6 +19,7 @@
 	#include <WindowsX.h> //Including win api extention 
 	#define WINDOWS
 	#define OPENGL //This should be DIRECTX instead, functionality will come later on
+	#define DEBUG_OPENGL
 #elif defined(__linux__) //Detecting linux
 	#define LINUX
 	#define OPENGL
@@ -34,6 +38,6 @@
 ////////////////////////////////////////
 
 #ifdef BUILD_DLL
-	#include <GL/glew.h>
-	#include <GL/freeglut.h>
+	#include <GL\glew.h>
+	#include <GL\freeglut.h>
 #endif

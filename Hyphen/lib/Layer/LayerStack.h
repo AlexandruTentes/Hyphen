@@ -33,7 +33,7 @@ namespace Hyphen
 
 		virtual ~LayerStack();
 	private:
-		Stack<Layer *> layer;
-		Stack<Overlay *> overlay;
+		Stack<Layer *> layer = NULL;
+		Stack<Overlay *> overlay = NULL;
 	};
 }

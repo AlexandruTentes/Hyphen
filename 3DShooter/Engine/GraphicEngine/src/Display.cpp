@@ -57,7 +57,7 @@ void Display::draw(Mesh * mesh, Shader * shader)
 		while (!glfwWindowShouldClose(window))
 		{
 			/* Render here */
-			glClear(GL_COLOR_BUFFER_BIT);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			
 			shader->bind();
 			mesh->draw();

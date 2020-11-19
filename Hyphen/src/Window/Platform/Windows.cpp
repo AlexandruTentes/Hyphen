@@ -54,7 +54,13 @@ namespace Hyphen
 		//Branchless if(specs.height == 0) then specs.height = 1, else retain previous height
 		//division by 0 protection!
 		specs.height = (specs.height != 0) * specs.height + 1 * (specs.height == 0);
+		float aspect = (float)specs.width / specs.height;
 		glViewport(0, 0, specs.width, specs.height);
+		glMatrixMode(GL_PROJECTION_MATRIX);
+		gluPerspective(60, aspect , 0.1f, 100.0f);
+
+		glMatrixMode(GL_MODELVIEW);                     // Select The Modelview Matrix
+		glLoadIdentity();
 	}
 
 	void Windows::kill_window()
@@ -95,6 +101,7 @@ namespace Hyphen
 
 	bool Windows::init()
 	{
+		RECT window_size;
 		DWORD window_ex_style;
 		DWORD window_style;
 		DEVMODE device_screen_settings;
@@ -125,8 +132,9 @@ namespace Hyphen
 		pixel_format.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
 		pixel_format.iPixelType = PFD_TYPE_RGBA;
 		pixel_format.cColorBits = 32;
-		pixel_format.cDepthBits = 32;
+		pixel_format.cDepthBits = 24;
 		pixel_format.cAlphaBits = 8;
+		pixel_format.iLayerType = PFD_MAIN_PLANE;
 
 		//===== Registering the window details for validation =====//
 		if (!RegisterClassEx(& wcex))
@@ -165,14 +173,10 @@ namespace Hyphen
 			window_style = WS_OVERLAPPEDWINDOW;
 
 			//===== Make sure the borders of the window don't overlap over the window dimensions =====//
-			RECT window_size;
 			window_size.left = (long) 0;
 			window_size.right = (long)specs.width;
 			window_size.top = (long) 0;
 			window_size.bottom = (long) specs.height;
-
-			//===== Only expand the widnwo for border filling in windowed mode =====//
-			AdjustWindowRectEx(& window_size, window_style, FALSE, window_ex_style);
 		}
 
 		//===== Don't paint over subwindows =====//
@@ -181,9 +185,14 @@ namespace Hyphen
 		//===== Store the current class instance to be called by WM_CREATE procedure at create time =====//
 		window_manager_instance.window_initialization(this);
 
+		//===== Force winapi to use the exact given dimensions(needed for windowed mode) =====//
+		AdjustWindowRectEx(&window_size, window_style, FALSE, window_ex_style);
+
 		//===== Create the window and get the handler, catch any errors =====//
 		if (!(handler = CreateWindowEx(window_ex_style, class_name.c_str(), specs.title.c_str(),
-			window_style, 0, 0, specs.width, specs.height,
+			window_style, 0, 0, 
+			window_size.right - window_size.left,
+			window_size.bottom - window_size.top,
 			NULL, NULL, hinstance, NULL)))
 		{
 			MessageBox(handler, "Could not create window!", "Window Creation Error", MB_OK);
@@ -214,6 +223,8 @@ namespace Hyphen
 			kill_window();
 			return false;
 		}
+
+		resize();
 
 		//===== Store this instance at given handler location for later use =====//
 		window_manager_instance.insert(handler, this);

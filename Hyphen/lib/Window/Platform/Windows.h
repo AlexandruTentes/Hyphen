@@ -52,7 +52,7 @@ namespace Hyphen
 		HINSTANCE hinstance = NULL; //This application's handler
 		std::string class_name = "test_class";
 
-	private:
+	public:
 		WindowSpecs specs;
 	};
 }

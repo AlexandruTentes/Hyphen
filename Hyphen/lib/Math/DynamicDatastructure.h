@@ -27,7 +27,7 @@ namespace Hyphen
 		}
 		DynamicObject(DynamicObject && data)	//Move constructor which steals data 
 		{
-			max_capacity = data.max;
+			max_capacity = data.max_capacity;
 			capacity = data.capacity;
 			size = data.size;
 
@@ -54,18 +54,11 @@ namespace Hyphen
 
 		void push(T * item) // Pushes items to the array object one at a time with resize check at each item
 		{
-			if (is_full())
-				return;
-
-			resize();
-			data[size] = item;
-			size++;
+			for (int i = 0; i < sizeof(* item) / sizeof(item[0]); i++)
+				push(item[i]);
 		};
 		void push(T item) // Pushes an item at the end of the array, always
 		{
-			if (item == NULL || item == nullptr)
-				return;
-
 			if (is_full())
 				return;
 
@@ -107,9 +100,10 @@ namespace Hyphen
 
 		bool is_full() { return max_capacity == 0 ? false : size == max_capacity; };
 		bool is_empty() { return size == 0; };
-		T get_one(unsigned int index) { return size == 0 || index >= size ? nullptr : data[index]; };
+		T get_one(unsigned int index) { return data[index]; };
 		T * get_all() { return data; };
 		unsigned int get_size() { return size; };
+		unsigned int get_capacity() { return capacity; };
 
 		DynamicObject & operator = (DynamicObject const & data)	// Copy assignment
 		{
@@ -168,6 +162,34 @@ namespace Hyphen
 		T * data;
 	};
 
+	///////////////////////////////////////////////////////////
+	//===== Class which stores a filename and it's path =====//
+	///////////////////////////////////////////////////////////
+
+	class FileAndPath
+	{
+		//===== Public functions =====//
+	public:
+		FileAndPath();
+
+		void add(std::string s, std::string p);
+
+		~FileAndPath();
+
+		//===== Protected functions =====//
+	protected:
+		void resize();
+
+		//===== Public variables =====//
+	public:
+		const int default_capacity = 4;
+		int capacity;
+
+		int size = 0;
+		std::string * file;
+		std::string * path;
+	};
+
 	//////////////////////////////////////////
 	//===== Stack object datastructure =====//
 	//////////////////////////////////////////
@@ -183,6 +205,8 @@ namespace Hyphen
 		void pop() { remove(size - 1, ); };
 		T peek(unsigned int index) { return get_one(index); };
 		T peek() { return get_one(size - 1); };
+
+		bool operator != (unsigned int n) { return size != n; }
 
 		virtual ~Stack() = default;
 	};

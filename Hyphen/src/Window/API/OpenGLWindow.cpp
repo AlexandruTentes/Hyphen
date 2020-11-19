@@ -31,10 +31,23 @@ namespace Hyphen
 			return false;
 		}
 		
-		glewInit();
+		if(glewInit() != GLEW_OK)
+		{
+			MessageBox(window_windows->handler, "Could not initialize glew!", "Window Creation Error", MB_OK);
+			window_windows->kill_window();
+			return false;
+		}
+
 		window->show();
 		gui->handler = handler;
 		stack.push_overlay(gui);
+	
+#ifdef DEBUG_OPENGL
+		// Enabling opengl debug event
+		glEnable(GL_DEBUG_OUTPUT);
+		glDebugMessageCallback(opengl_debug_callback, 0);
+#endif
+
 		return basic_window_init;
 	}
 
