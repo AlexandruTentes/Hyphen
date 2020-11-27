@@ -71,6 +71,11 @@ namespace Hyphen
 		glUniform4f(get_uniform_location(name), v0, v1, v2, v3);
 	}
 
+	void Shader::set_uniform_matrix4fv(std::string name, Matrix4d<float> & mat)
+	{
+		glUniformMatrix4fv(get_uniform_location(name), 1, GL_FALSE, &mat.mat[0][0]);
+	}
+
 	void Shader::compile_shaders()
 	{
 		for (unsigned int i = 0; i < size; i++)
@@ -141,7 +146,7 @@ namespace Hyphen
 
 	GLuint Shader::get_uniform_location(std::string name)
 	{
-		int location = glGetUniformLocation(shader_handler, name.c_str());
+		unsigned int location = glGetUniformLocation(shader_handler, name.c_str());
 
 		if (location == -1)
 			std::cout << "WARNING: Uniform -> " << name << " doesn't exist!" << std::endl;

@@ -43,25 +43,25 @@ namespace Hyphen
 	{
 		switch (count)
 		{
-		case 0: { _index.vec_x.x = stoi(word); break; }
-		case 1: { _index.vec_x.y = texture.has_texture ? stoi(word) : 0; 
+		case 0: { _index.mat[0][0] = stoi(word); break; }
+		case 1: { _index.mat[0][1] = texture.has_texture ? stoi(word) : 0; 
 			if (!texture.has_texture) { count++; indexing(word); } break; }
-		case 2: { _index.vec_x.z = normal.has_normal ? stoi(word) : 0; 
+		case 2: { _index.mat[0][2] = normal.has_normal ? stoi(word) : 0; 
 			if (!normal.has_normal) { count++; indexing(word); } break; }
-		case 3: { _index.vec_y.x = stoi(word); break; }
-		case 4: { _index.vec_y.y = texture.has_texture ? stoi(word) : 0; 
+		case 3: { _index.mat[1][0] = stoi(word); break; }
+		case 4: { _index.mat[1][1] = texture.has_texture ? stoi(word) : 0; 
 			if (!texture.has_texture) { count++; indexing(word); } break; }
-		case 5: { _index.vec_y.z = normal.has_normal ? stoi(word) : 0; 
+		case 5: { _index.mat[1][2] = normal.has_normal ? stoi(word) : 0; 
 			if (!normal.has_normal) { count++; indexing(word); } break; }
-		case 6: { _index.vec_z.x = stoi(word); break; }
-		case 7: { _index.vec_z.y = texture.has_texture ? stoi(word) : 0; 
+		case 6: { _index.mat[2][0] = stoi(word); break; }
+		case 7: { _index.mat[2][1] = texture.has_texture ? stoi(word) : 0; 
 			if (!texture.has_texture) { count++; indexing(word); } break; }
-		case 8: { _index.vec_z.z = normal.has_normal ? stoi(word) : 0; 
+		case 8: { _index.mat[2][2] = normal.has_normal ? stoi(word) : 0; 
 			if (!normal.has_normal) { count++; indexing(word); } break; }
-		case 9: { _index.vec_t.x = stoi(word); index.has_fourth = true; break; }
-		case 10: { _index.vec_t.y = texture.has_texture ? stoi(word) : 0; 
+		case 9: { _index.mat[3][0] = stoi(word); index.has_fourth = true; break; }
+		case 10: { _index.mat[3][1] = texture.has_texture ? stoi(word) : 0; 
 			if (!texture.has_texture) { count++; indexing(word); } break; }
-		case 11: { _index.vec_t.z = normal.has_normal ? stoi(word) : 0; break; }
+		case 11: { _index.mat[3][2] = normal.has_normal ? stoi(word) : 0; break; }
 		default: { index.add(_index); count = -1; read_index = 0; }
 		}
 	}
@@ -74,9 +74,9 @@ namespace Hyphen
 		{
 			switch (count)
 			{
-			case 0: { _vertex.x = stof(word) / 2.0; break; }
-			case 1: { _vertex.y = stof(word) / 2.0; break; }
-			case 2: { _vertex.z = stof(word) / 2.0; break; }
+			case 0: { _vertex.vec[0] = stof(word); break; }
+			case 1: { _vertex.vec[1] = stof(word); break; }
+			case 2: { _vertex.vec[2] = stof(word); break; }
 			default: {vertex.add(_vertex); count = -1; read_vertex = 0; }
 			}
 			count++;
@@ -86,9 +86,9 @@ namespace Hyphen
 		{
 			switch (count)
 			{
-			case 0: { _texture.x = stof(word); break; }
-			case 1: { _texture.y = stof(word); break; }
-			case 2: { _texture.z = stof(word); break; }
+			case 0: { _texture.vec[0] = stof(word); break; }
+			case 1: { _texture.vec[1] = stof(word); break; }
+			case 2: { _texture.vec[2] = stof(word); break; }
 			default: {texture.add(_texture); count = -1; read_texture = 0; texture.has_texture = true; }
 			}
 			count++;
@@ -98,9 +98,9 @@ namespace Hyphen
 		{
 			switch (count)
 			{
-			case 0: { _normal.x = stof(word); break; }
-			case 1: { _normal.y = stof(word); break; }
-			case 2: { _normal.z = stof(word); break; }
+			case 0: { _normal.vec[0] = stof(word); break; }
+			case 1: { _normal.vec[1] = stof(word); break; }
+			case 2: { _normal.vec[2] = stof(word); break; }
 			default: {normal.add(_normal); count = -1; read_normal = 0; normal.has_normal = true; }
 			}
 			count++;

@@ -6,6 +6,11 @@
 
 namespace Hyphen
 {
+#define DEFAULTING(size)	for (unsigned int i = 0; i < size; i++) \
+								for (unsigned int j = 0; j < size; j++) \
+									mat[i][j] = def;
+#define TO_RAD(angle)		angle = angle * (PI / 180)
+
 	////////////////////////////////////
 	//===== Vector datastructure =====//
 	////////////////////////////////////
@@ -13,55 +18,64 @@ namespace Hyphen
 	template <class T>
 	struct Vector2d
 	{
-		T x, y;
+		T vec[2];
 		Vector2d() {};
-		Vector2d(T def) { init(def); };
-		Vector2d(T x, T y) : x(x), y(y) {};
-		void init(T def)
+		Vector2d(T const & def) { init(def); };
+		Vector2d(T const & x, T const & y) 
 		{
-			x = def; y = def;
+			vec[0] = x; vec[1] = y;
+		};
+		void init(T const & def)
+		{
+			vec[0] = def; vec[1] = def;
 		}
 	};
 
 	template <class T>
 	struct Vector3d
 	{
-		T x, y, z;
+		T vec[3];
 		Vector3d() {};
-		Vector3d(T def) { init(def); }
-		Vector3d(T x, T y, T z) :
-			x(x), y(y), z(z) {};
-		void init(T def)
+		Vector3d(T const & def) { init(def); }
+		Vector3d(T const & x, T const & y, T const & z)
 		{
-			x = def; y = def; z = def;
+			vec[0] = x; vec[1] = y; vec[2] = z;
+		};
+		void init(T const & def)
+		{
+			vec[0] = def; vec[1] = def; vec[2] = def;
 		}
 	};
 
 	template <class T>
 	struct Vector4d
 	{
-		T x, y, z, t;
+		T vec[4];
 		Vector4d() {};
-		Vector4d(T def) { init(def); }
-		Vector4d(T x, T y, T z, T t) :
-			x(x), y(y), z(z), t(t) {};
-		void init(T def)
+		Vector4d(T const & def) { init(def); }
+		Vector4d(T const & x, T const & y, T const & z, T const & t)
 		{
-			x = def; y = def; z = def; t = def;
+			vec[0] = x; vec[1] = y; vec[2] = z; vec[3] = t;
+		}
+		void init(T const & def)
+		{
+			vec[0] = def; vec[1] = def; vec[2] = def; vec[3] = def;
 		}
 	};
 
 	template <class T>
 	struct Vector5d
 	{
-		T x, y, z, t, k;
+		T vec[5];
 		Vector5d() {};
-		Vector5d(T def) { init(def); }
-		Vector5d(T x, T y, T z, T t, T k) : 
-			x(x), y(y), z(z), t(t), k(k) {}
-		void init(T def)
+		Vector5d(T const & def) { init(def); }
+		Vector5d(T const & x, T const & y, T const & z, T const & t, T const & k)
 		{
-			x = def; y = def; z = def; t = def; k = def;
+			vec[0] = x; vec[1] = y; vec[2] = z; vec[3] = t; vec[4] = k;
+		}
+		void init(T const & def)
+		{
+			vec[0] = def; vec[1] = def; vec[2] = def; vec[3] = def; vec[4] = def;
 		}
 	};
 
@@ -72,100 +86,162 @@ namespace Hyphen
 	template <class T>
 	struct Matrix2d
 	{
-		Vector2d<T> vec_x, vec_y;
+		T mat[2][2];
+
 		Matrix2d() {};
-		Matrix2d(T def) { init(def); }
-		Matrix2d(Vector2d<T> vec_x, Vector2d<T> vec_y) :
-			vec_x(vec_x), vec_y(vec_y) {};
-		Matrix2d(T vec_x_x, T vec_x_y,
-			T vec_y_x, T vec_y_y)
+		Matrix2d(T ** arr) { mat = arr; }
+		Matrix2d(T const & def) { init(def); }
+		Matrix2d(Vector2d<T> const & vec_x, Vector2d<T> const & vec_y)
 		{
-			vec_x.x = vec_x_x; vec_x.y = vec_x_y;
-			vec_y.x = vec_y_x; vec_y.y = vec_y_y;
+			mat[0][0] = vec_x.vec[0]; mat[0][1] = vec_x.vec[1];
+			mat[1][0] = vec_y.vec[0]; mat[1][1] = vec_y.vec[1];
 		};
-		void init(T def)
+		Matrix2d(T const & vec_x_x, T const & vec_x_y,
+			T & vec_y_x, T & vec_y_y)
 		{
-			vec_x.init(def); vec_y.init(def);
+			mat[0][0] = vec_x_x; mat[0][1] = vec_x_y;
+			mat[1][0] = vec_y_x; mat[1][1] = vec_y_y;
+		};
+		void init(T const & def)
+		{
+			DEFAULTING(2);
+		}
+
+		Matrix2d<T> & operator * (Matrix2d<T> const & other)
+		{
+			return multiply(* this, other);
 		}
 	};
 
 	template <class T>
 	struct Matrix3d
 	{
-		Vector3d<T> vec_x, vec_y, vec_z;
+		T mat[3][3];
+		Vector3d<T> c_vec_x, c_vec_y, c_vec_z;
 		Matrix3d() {};
-		Matrix3d(T def) { init(def); }
-		Matrix3d(Vector3d<T> vec_x, Vector3d<T> vec_y, Vector3d<T> vec_z) :
-			vec_x(vec_x), vec_y(vec_y), vec_z(vec_z) {};
-		Matrix3d(T vec_x_x, T vec_x_y, T vec_x_z,
-			T vec_y_x, T vec_y_y, T vec_y_z,
-			T vec_z_x, T vec_z_y, T vec_z_z)
+		Matrix3d(T ** arr) { mat = arr; }
+		Matrix3d(T const & def) { init(def); }
+		Matrix3d(Vector3d<T> const & vec_x, Vector3d<T> const & vec_y, Vector3d<T> const & vec_z)
 		{
-			vec_x.x = vec_x_x; vec_x.y = vec_x_y; vec_x.z = vec_x_z;
-			vec_y.x = vec_y_x; vec_y.y = vec_y_y; vec_y.z = vec_y_z;
-			vec_z.x = vec_z_x; vec_z.y = vec_z_y; vec_z.z = vec_z_z;
+			mat[0][0] = vec_x.vec[0]; mat[0][1] = vec_x.vec[1]; mat[0][2] = vec_x.vec[2];
+			mat[1][0] = vec_y.vec[0]; mat[1][1] = vec_y.vec[1]; mat[1][2] = vec_y.vec[2];
+			mat[2][0] = vec_z.vec[0]; mat[2][1] = vec_z.vec[1]; mat[2][2] = vec_z.vec[2];
+		}
+		Matrix3d(T const & vec_x_x, T const & vec_x_y, T const & vec_x_z,
+			T const & vec_y_x, T const & vec_y_y, T const & vec_y_z,
+			T const & vec_z_x, T const & vec_z_y, T const & vec_z_z)
+		{
+			mat[0][0] = vec_x_x; mat[0][1] = vec_x_y; mat[0][2] = vec_x_z;
+			mat[1][0] = vec_y_x; mat[1][1] = vec_y_y; mat[1][2] = vec_y_z;
+			mat[2][0] = vec_z_x; mat[2][1] = vec_z_y; mat[2][2] = vec_z_z;
 		};
-		void init(T def)
+		void init(T const & def)
 		{
-			vec_x.init(def); vec_y.init(def); vec_z.init(def);
+			DEFAULTING(2);
+		}
+		Matrix3d<T> & operator *(Matrix3d<T> const & other)
+		{
+			return multiply(* this, other);
 		}
 	};
 
 	template <class T>
 	struct Matrix4d
 	{
-		Vector4d<T> vec_x, vec_y, vec_z, vec_t;
+		T mat[4][4];
 		Matrix4d() {};
-		Matrix4d(T def) { init(def); }
-		Matrix4d(Vector4d<T> vec_x, Vector4d<T> vec_y,
-			Vector4d<T> vec_z, Vector4d<T> vec_t) :
-			vec_x(vec_x), vec_y(vec_y), vec_z(vec_z), vec_t(vec_t) {};
-		Matrix4d(T vec_x_x, T vec_x_y, T vec_x_z, T vec_x_t,
-			T vec_y_x, T vec_y_y, T vec_y_z, T vec_y_t,
-			T vec_z_x, T vec_z_y, T vec_z_z, T vec_z_t,
-			T vec_t_x, T vec_t_y, T vec_t_z, T vec_t_t)
+		Matrix4d(T ** arr) { mat = arr; }
+		Matrix4d(T const & def) { init(def); }
+		Matrix4d(Vector4d<T> const & vec_x, Vector4d<T> const & vec_y,
+			Vector4d<T> const & vec_z, Vector4d<T> const & vec_t)
 		{
-			vec_x.x = vec_x_x; vec_x.y = vec_x_y; vec_x.z = vec_x_z; vec_x.t = vec_x_t;
-			vec_y.x = vec_y_x; vec_y.y = vec_y_y; vec_y.z = vec_y_z; vec_y.t = vec_y_t;
-			vec_z.x = vec_z_x; vec_z.y = vec_z_y; vec_z.z = vec_z_z; vec_z.t = vec_z_t;
-			vec_t.x = vec_t_x; vec_t.y = vec_t_y; vec_t.z = vec_t_z; vec_t.t = vec_t_t;
+			mat[0][0] = vec_x.vec[0]; mat[0][1] = vec_x.vec[1]; mat[0][2] = vec_x.vec[2]; mat[0][3] = vec_x.vec[3];
+			mat[1][0] = vec_y.vec[0]; mat[1][1] = vec_y.vec[1]; mat[1][2] = vec_y.vec[2]; mat[1][3] = vec_y.vec[3];
+			mat[2][0] = vec_z.vec[0]; mat[2][1] = vec_z.vec[1]; mat[2][2] = vec_z.vec[2]; mat[2][3] = vec_z.vec[3];
+			mat[3][0] = vec_t.vec[0]; mat[3][1] = vec_t.vec[1]; mat[3][2] = vec_t.vec[2]; mat[3][3] = vec_t.vec[3];
+		}
+		Matrix4d(T const & vec_x_x, T const & vec_x_y, T const & vec_x_z, T const & vec_x_t,
+			T const & vec_y_x, T const & vec_y_y, T const & vec_y_z, T const & vec_y_t,
+			T const & vec_z_x, T const & vec_z_y, T const & vec_z_z, T const & vec_z_t,
+			T const & vec_t_x, T const & vec_t_y, T const & vec_t_z, T const & vec_t_t)
+		{
+			mat[0][0] = vec_x_x; mat[0][1] = vec_x_y; mat[0][2] = vec_x_z; mat[0][3] = vec_x_t;
+			mat[1][0] = vec_y_x; mat[1][1] = vec_y_y; mat[1][2] = vec_y_z; mat[1][3] = vec_y_t;
+			mat[2][0] = vec_z_x; mat[2][1] = vec_z_y; mat[2][2] = vec_z_z; mat[2][3] = vec_z_t;
+			mat[3][0] = vec_t_x; mat[3][1] = vec_t_y; mat[3][2] = vec_t_z; mat[3][3] = vec_t_t;
 		};
-		void init(T def)
+		void init(T const & def)
 		{
-			vec_x.init(def); vec_y.init(def); vec_z.init(def); vec_t.init(def);
+			DEFAULTING(4)
+		}
+		Matrix4d<T> & operator * (Matrix4d<T> const & other)
+		{
+			return multiply(* this, other);
+		}
+		std::string print()
+		{
+			std::string res = "";
+
+			for (unsigned int i = 0; i < 4; i++)
+			{
+				for (unsigned int j = 0; j < 4; j++)
+				{
+					res += std::to_string(mat[i][j]) + " ";
+				}
+
+				res += "\n";
+			}
+
+
+			return res;
 		}
 	};
 
 	template <class T>
 	struct Matrix5d
 	{
-		Vector5d<T> vec_x, vec_y, vec_z, vec_t, vec_k;
+		T mat[5][5];
 		Matrix5d() {};
+		Matrix5d(T ** arr) { mat = arr; }
 		Matrix5d(T def) { init(def); }
 		Matrix5d(Vector5d<T> vec_x, Vector5d<T> vec_y,
-			Vector5d<T> vec_z, Vector5d<T> vec_t, Vector5d<T> vec_k) :
-			vec_x(vec_x), vec_y(vec_y), vec_z(vec_z), vec_t(vec_t), vec_k(vec_k) {};
+			Vector5d<T> vec_z, Vector5d<T> vec_t, Vector5d<T> vec_k)
+		{
+			mat[0][0] = vec_x.vec[0]; mat[0][1] = vec_x.vec[1]; 
+			mat[0][2] = vec_x.vec[2]; mat[0][3] = vec_x.vec[3]; mat[0][4] = vec_x.vec[4];
+			mat[1][0] = vec_y.vec[0]; mat[1][1] = vec_y.vec[1]; 
+			mat[1][2] = vec_y.vec[2]; mat[1][3] = vec_y.vec[3]; mat[1][4] = vec_y.vec[4];
+			mat[2][0] = vec_z.vec[0]; mat[2][1] = vec_z.vec[1]; 
+			mat[2][2] = vec_z.vec[2]; mat[2][3] = vec_z.vec[3]; mat[2][4] = vec_z.vec[4];
+			mat[3][0] = vec_t.vec[0]; mat[3][1] = vec_t.vec[1];
+			mat[3][2] = vec_t.vec[2]; mat[3][3] = vec_t.vec[3]; mat[3][4] = vec_t.vec[4];
+			mat[4][0] = vec_k.vec[0]; mat[4][1] = vec_k.vec[1];
+			mat[4][2] = vec_k.vec[2]; mat[4][3] = vec_k.vec[3]; mat[4][4] = vec_k.vec[4];
+		}
 		Matrix5d(T vec_x_x, T vec_x_y, T vec_x_z, T vec_x_t, T vec_x_k,
 			T vec_y_x, T vec_y_y, T vec_y_z, T vec_y_t, T vec_y_k,
 			T vec_z_x, T vec_z_y, T vec_z_z, T vec_z_t, T vec_z_k,
 			T vec_t_x, T vec_t_y, T vec_t_z, T vec_t_t, T vec_t_k,
 			T vec_k_x, T vec_k_y, T vec_k_z, T vec_k_t, T vec_k_k)
 		{
-			vec_x.x = vec_x_x; vec_x.y = vec_x_y;
-			vec_x.z = vec_x_z; vec_x.t = vec_x_t; vec_x.k = vec_x_k;
-			vec_y.x = vec_y_x; vec_y.y = vec_y_y;
-			vec_y.z = vec_y_z; vec_y.t = vec_y_t; vec_y.k = vec_y_k;
-			vec_z.x = vec_z_x; vec_z.y = vec_z_y;
-			vec_z.z = vec_z_z; vec_z.t = vec_z_t; vec_z.k = vec_z_k;
-			vec_t.x = vec_t_x; vec_t.y = vec_t_y;
-			vec_t.z = vec_t_z; vec_t.t = vec_t_t; vec_t.k = vec_t_k;
-			vec_k.x = vec_k_x; vec_k.y = vec_k_y;
-			vec_k.z = vec_k_z; vec_k.t = vec_k_t; vec_k.k = vec_k_k;
+			mat[0][0] = vec_x_x; mat[0][1] = vec_x_y;
+			mat[0][2] = vec_x_z; mat[0][3] = vec_x_t; mat[0][4] = vec_x_k;
+			mat[1][0] = vec_y_x; mat[1][1] = vec_y_y;
+			mat[1][2] = vec_y_z; mat[1][3] = vec_y_t; mat[1][4] = vec_y_k;
+			mat[2][0] = vec_z_x; mat[2][1] = vec_z_y;
+			mat[2][2] = vec_z_z; mat[2][3] = vec_z_t; mat[2][4] = vec_z_k;
+			mat[3][0] = vec_t_x; mat[3][1] = vec_t_y;
+			mat[3][2] = vec_t_z; mat[3][3] = vec_t_t; mat[3][4] = vec_t_k;
+			mat[4][0] = vec_k_x; mat[4][1] = vec_k_y;
+			mat[4][2] = vec_k_z; mat[4][3] = vec_k_t; mat[4][4] = vec_k_k;
 		};
 		void init(T def)
 		{
-			vec_x.init(def); vec_y.init(def);
-			vec_z.init(def); vec_t.init(def); vec_k.init(def);
+			DEFAULTING(5)
+		}
+		Matrix5d<T> & operator * (Matrix5d<T> const & other)
+		{
+			return multiply(* this, other);
 		}
 	};
 
@@ -178,6 +254,79 @@ namespace Hyphen
 	//////////////////////////////////////////////
 	//===== Matrix mathematical operations =====//
 	//////////////////////////////////////////////
+	
+	//===== Template function which multiplies two matrices =====//
+	template<class T>
+	T multiply(T const & left, T const & right)
+	{
+		T aux;
+		unsigned int size = sizeof(aux.mat[0]) / sizeof(aux.mat[0][0]);
+	
+		for (unsigned int i = 0; i < size; i++)
+			for (unsigned int j = 0; j < size; j++)
+			{
+				aux.mat[i][j] = 0;
+				for (unsigned int k = 0; k < size; k++)
+					aux.mat[i][j] += (left.mat[i][k] * right.mat[k][j]);
+			}
+		return aux;
+	}
 
-	//soon
+	//===== Templated function which calculates the scale/position/rotation matrix
+	template<class K>
+	Matrix4d<K> get_transformation_matrix(K const & scale, K * translation, K const & x_rot, K const & y_rot, K const & z_rot)
+	{
+		Matrix4d<K> scale_mat(scale, 0, 0, 0,
+							  0, scale, 0, 0,
+							  0, 0, scale, 0,
+							  0, 0, 0, 1);
+
+		Matrix4d<K> rot_mat_x(	1, 0, 0, 0,
+								0, cos(x_rot), -sin(x_rot), 0,
+								0, sin(x_rot), cos(x_rot), 0,
+								0, 0, 0, 1);
+
+		Matrix4d<K> rot_mat_y(	cos(y_rot), 0, sin(y_rot), 0,
+								0, 1, 0, 0,
+								-sin(y_rot), 0, cos(y_rot), 0,
+								0, 0, 0, 1);
+
+		Matrix4d<K> rot_mat_z(	cos(z_rot), -sin(z_rot), 0, 0,
+								sin(z_rot), cos(z_rot), 0, 0,
+								0, 0, 1, 0,
+								0, 0, 0, 1);
+
+		Matrix4d<K> translation_mat(1, 0, 0, 0,
+									0, 1, 0, 0,
+									0, 0, 1, 0,
+									translation[0], translation[1], translation[2], 1);
+
+		Matrix4d<K> rot_mat = rot_mat_z * rot_mat_y * rot_mat_x;
+		Matrix4d<K> res = scale_mat * rot_mat * translation_mat;
+		return res;
+	}
+
+	//===== Templated function which calculates the fov/aspect/znear/zfar matrix =====//
+	template <class K>
+	Matrix4d<K> get_perspective_matrix(K fov, K aspect_ratio, K z_near, K z_far)
+	{
+		Matrix4d<K> res;
+		return res;
+	}
+
+	//===== Templated function which calculates =====//
+	template <class K>
+	Matrix4d<K> get_view_matrix(Matrix4d<K> const & perspective, Matrix4d<K> view)
+	{
+		Matrix4d<K> res;
+		return res;
+	}
+
+	//===== Templated function which calculates =====//
+	template <class K>
+	Matrix4d<K> get_calc_matrix(Matrix4d<K> const & transform, Matrix4d<K> const & view)
+	{
+		Matrix4d<K> res = view * transform;
+		return res;
+	}
 }

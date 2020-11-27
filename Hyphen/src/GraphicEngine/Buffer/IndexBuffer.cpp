@@ -19,15 +19,15 @@ namespace Hyphen
 			aux.init(0);
 			if (!cache.get_all()->has_fourth)
 			{
-				aux.x = cache.get_all()->get_one(i).vec_x.x;
-				aux.y = cache.get_all()->get_one(i).vec_y.x;
-				aux.z = cache.get_all()->get_one(i).vec_z.x;
+				aux.vec[0] = cache.get_all()->get_one(i).mat[0][0];
+				aux.vec[1] = cache.get_all()->get_one(i).mat[1][0];
+				aux.vec[2] = cache.get_all()->get_one(i).mat[2][0];
 			}
 			else
 			{
-				aux.x = cache.get_all()->get_one(i).vec_x.x;
-				aux.y = cache.get_all()->get_one(i).vec_z.x;
-				aux.z = cache.get_all()->get_one(i).vec_t.x;
+				aux.vec[0] = cache.get_all()->get_one(i).mat[0][0];
+				aux.vec[1] = cache.get_all()->get_one(i).mat[2][0];
+				aux.vec[2] = cache.get_all()->get_one(i).mat[3][0];
 			}
 
 			vertex_index.push(aux);

@@ -18,41 +18,13 @@ namespace Hyphen
 			std::cerr << "Error at window initialization!\n";
 
 		//===== TEMPORARY: showcase purposes =====//
-		/*
-		float poz[6] = {
-			-1.0f, -1.0f,
-			1.0f, -1.0f,
-			0.0f, 1.0f
-		};
 
-		unsigned int r;
-		glGenBuffers(1, &r);
-		glBindBuffer(GL_ARRAY_BUFFER, r);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(poz), poz, GL_STATIC_DRAW);
-		
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void *) 0);
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		*/
 		//Preparing the shaders
 		Shader shader;
 		shader.load_shaders(shader_path);
 		shader.compile_shaders();
-
+		
 		//Loading the model data
-		/*
-		Vertex v;
-		v.add(Vector3d<float>(-1.0, -1.0, 0.0));
-		v.add(Vector3d<float>(1.0, -1.0, 0.0));
-		v.add(Vector3d<float>(0.0, 1.0, 0.0));
-		Normal n;
-		Texture t;
-		Index i;
-		i.add(Matrix3d<int>(0, 0, 0,
-							1, 0, 0,
-							2, 0, 0));
-		Model m(v, n, t, i); //read_model_format();*/
 		Model m = read_model_format();
 
 		//Loading the vertex buffer
@@ -82,6 +54,26 @@ namespace Hyphen
 			glClearColor(0.5, 0.25, 0.5, 1.0);
 
 			shader.bind();
+			
+			Matrix4d<float> get_transformation = get_transformation_matrix(temporary_globals::get_instance().scale,
+				temporary_globals::get_instance().translation, TO_RAD(temporary_globals::get_instance().rotation_x),
+				TO_RAD(temporary_globals::get_instance().rotation_y), TO_RAD(temporary_globals::get_instance().rotation_z));
+
+			Matrix4d<float> get_perspective = get_perspective_matrix(60.0f, aspect_ratio, 0.1f, 100.0f);
+
+			Matrix4d<float> view(0, 0, -3.0, 0,
+				0, 0, 1.0, 0,
+				0, 1.0, 0, 0,
+				0, 0, 0, 0);
+
+			Matrix4d<float> get_view = get_view_matrix(get_perspective, view);
+
+			Matrix4d<float> get_mat = get_calc_matrix(get_transformation, get_view);
+
+			std::cout << "model: \n" << get_transformation.print() << "\n";
+
+			shader.set_uniform_matrix4fv("transform", get_transformation);
+
 			va.bind();
 			vb.bind();
 			ib.bind();
@@ -98,7 +90,7 @@ namespace Hyphen
 				std::cout << "POLLING MOUSE: x: " << mv.get_x() << " y: " << mv.get_y() << std::endl;
 				*/
 
-			for (unsigned int i = layer_stack.get_overlays().get_size(); i >= 1 ; i--)
+			for (unsigned int i = layer_stack.get_overlays().get_size(); i >= 1; i--)
 				layer_stack.get_overlays().get_one(i - 1)->update();
 
 			app_window->window->update();

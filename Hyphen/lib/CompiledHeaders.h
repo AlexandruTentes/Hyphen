@@ -6,6 +6,10 @@
 #include <tuple>
 #include <functional>
 #include <fstream>
+#include <math.h>
+
+#include "../thirdparty/glm/glm.hpp"
+#include "../thirdparty/glm/gtx/transform.hpp"
 
 #include "GlobalVariables.h"
 

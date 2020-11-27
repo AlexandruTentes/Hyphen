@@ -15,7 +15,7 @@ namespace Hyphen
 												EventType get_type() override { return type; }; \
 												void copy(const T & other) { * this = other; } \
 												virtual ~T() = default; \
-												EVENT_MEMBER_PARTIAL_SINGLETONIZE(T)
+												PARTIAL_SINGLETONIZE(T)
 
 	enum EventType
 	{
@@ -36,7 +36,7 @@ namespace Hyphen
 	class EventPoll
 	{
 	public:
-		EVENT_MEMBER_SINGLETONIZE(EventPoll)
+		SINGLETONIZE(EventPoll)
 		bool event_poll[END - 1];
 		Event * event_array[END - 1];
 		virtual ~EventPoll() 

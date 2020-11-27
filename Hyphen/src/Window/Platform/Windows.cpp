@@ -54,10 +54,10 @@ namespace Hyphen
 		//Branchless if(specs.height == 0) then specs.height = 1, else retain previous height
 		//division by 0 protection!
 		specs.height = (specs.height != 0) * specs.height + 1 * (specs.height == 0);
-		float aspect = (float)specs.width / specs.height;
+		aspect_ratio = (float)specs.width / specs.height;
 		glViewport(0, 0, specs.width, specs.height);
 		glMatrixMode(GL_PROJECTION_MATRIX);
-		gluPerspective(60, aspect , 0.1f, 100.0f);
+		gluPerspective(60, aspect_ratio, 0.1f, 100.0f);
 
 		glMatrixMode(GL_MODELVIEW);                     // Select The Modelview Matrix
 		glLoadIdentity();

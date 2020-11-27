@@ -14,11 +14,13 @@ namespace Hyphen
 	extern unsigned int width, height;											// window width and height
 	extern unsigned int prev_width, prev_height;
 	extern int min_width, min_height;
+	extern float aspect_ratio;
 
 	//========================================================//
 	//						Statics							  //
 	//========================================================//
-	static const std::string window_title = "Dev Env";
-	static const std::string shader_path = "Shader";
-	static const std::string model_path = "Model";
+	static const char * window_title = "Dev Env";
+	static const char * shader_path = "Shader";
+	static const char * model_path = "Model";
+	static const float PI = 3.141592653f;
 }
