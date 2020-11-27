@@ -10,7 +10,7 @@ namespace Hyphen
 	class IndexBuffer : public DynamicObject<GLuint>
 	{
 	public:
-		void load(Index * data);
+		void load(Index const & data);
 		void generate_buffers();
 		void bind();
 		void unbind() const;

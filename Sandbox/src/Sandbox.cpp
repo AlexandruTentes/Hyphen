@@ -1,8 +1,6 @@
 #include "Hyphen.h"
 #include "../lib/Layers.h"
 #include "../lib/Event.h"
-#include <GL\glew.h>
-#include <GL\freeglut.h>
 
 class Sandbox : public Hyphen::App
 {

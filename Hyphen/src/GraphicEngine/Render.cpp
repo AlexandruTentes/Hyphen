@@ -8,7 +8,7 @@ namespace Hyphen
 		this->size = size;
 	}
 
-	void Render::draw(Vertex * vertices, Mesh * mesh, Shader * shader)
+	void Render::draw(Vertex const & vertices, Mesh * mesh, Shader * shader)
 	{
 		//vertices->add(data, size);
 

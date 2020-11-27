@@ -274,8 +274,9 @@ namespace Hyphen
 
 	//===== Templated function which calculates the scale/position/rotation matrix
 	template<class K>
-	Matrix4d<K> get_transformation_matrix(K const & scale, K * translation, K const & x_rot, K const & y_rot, K const & z_rot)
+	static glm::mat4 get_transformation_matrix(K const & scale, K * translation, K const & x_rot, K const & y_rot, K const & z_rot)
 	{
+		/*
 		Matrix4d<K> scale_mat(scale, 0, 0, 0,
 							  0, scale, 0, 0,
 							  0, 0, scale, 0,
@@ -303,30 +304,52 @@ namespace Hyphen
 
 		Matrix4d<K> rot_mat = rot_mat_z * rot_mat_y * rot_mat_x;
 		Matrix4d<K> res = scale_mat * rot_mat * translation_mat;
-		return res;
+		
+		return res;*/
+
+		glm::mat4 poz = glm::translate(glm::vec3(translation[0], translation[1], translation[2]));
+		glm::mat4 rot_x = glm::rotate(x_rot, glm::vec3(1, 0, 0));
+		glm::mat4 rot_y = glm::rotate(y_rot, glm::vec3(0, 1, 0));
+		glm::mat4 rot_z = glm::rotate(z_rot, glm::vec3(0, 0, 1));
+		glm::mat4 mscale = glm::scale(glm::vec3(scale, scale, scale));
+
+		glm::mat4 rot = rot_z * rot_y * rot_x;
+		return poz * rot * mscale;
 	}
 
 	//===== Templated function which calculates the fov/aspect/znear/zfar matrix =====//
 	template <class K>
-	Matrix4d<K> get_perspective_matrix(K fov, K aspect_ratio, K z_near, K z_far)
+	static glm::mat4 get_perspective_matrix(K fov, K aspect_ratio, K z_near, K z_far)
 	{
+		return glm::perspective(fov, aspect_ratio, z_near, z_far);
+
+		/*
 		Matrix4d<K> res;
-		return res;
+		return res;*/
 	}
 
 	//===== Templated function which calculates =====//
 	template <class K>
-	Matrix4d<K> get_view_matrix(Matrix4d<K> const & perspective, Matrix4d<K> view)
+	static glm::mat4 get_view_matrix(glm::mat4 const & perspective, Matrix4d<K> view)
 	{
+		glm::vec3 poz = glm::vec3(view.mat[0][0], view.mat[0][1], view.mat[0][2]);
+		glm::vec3 forward = glm::vec3(view.mat[1][0], view.mat[1][1], view.mat[1][2]);
+		glm::vec3 up = glm::vec3(view.mat[2][0], view.mat[2][1], view.mat[2][2]);
+
+		return perspective * glm::lookAt(poz, poz + forward, up);
+
+		/*
 		Matrix4d<K> res;
-		return res;
+		return res;*/
 	}
 
 	//===== Templated function which calculates =====//
-	template <class K>
-	Matrix4d<K> get_calc_matrix(Matrix4d<K> const & transform, Matrix4d<K> const & view)
+	//template <class K>
+	static glm::mat4 get_calc_matrix(glm::mat4 const & transform, glm::mat4 const & view)
 	{
+		return view * transform;
+		/*
 		Matrix4d<K> res = view * transform;
-		return res;
+		return res;*/
 	}
 }

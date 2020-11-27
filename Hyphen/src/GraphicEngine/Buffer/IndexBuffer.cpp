@@ -2,7 +2,7 @@
 
 namespace Hyphen
 {
-	void IndexBuffer::load(Index * data)
+	void IndexBuffer::load(Index const & data)
 	{
 		push((GLuint)0);
 		cache.push(data);
@@ -32,7 +32,6 @@ namespace Hyphen
 
 			vertex_index.push(aux);
 		}
-
 
 		for (GLuint i = 0; i < cache.get_size(); i++)
 		{

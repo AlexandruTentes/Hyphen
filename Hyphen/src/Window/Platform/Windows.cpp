@@ -57,7 +57,6 @@ namespace Hyphen
 		aspect_ratio = (float)specs.width / specs.height;
 		glViewport(0, 0, specs.width, specs.height);
 		glMatrixMode(GL_PROJECTION_MATRIX);
-		gluPerspective(60, aspect_ratio, 0.1f, 100.0f);
 
 		glMatrixMode(GL_MODELVIEW);                     // Select The Modelview Matrix
 		glLoadIdentity();
@@ -133,7 +132,8 @@ namespace Hyphen
 		pixel_format.iPixelType = PFD_TYPE_RGBA;
 		pixel_format.cColorBits = 32;
 		pixel_format.cDepthBits = 24;
-		pixel_format.cAlphaBits = 8;
+		pixel_format.cAlphaBits = 16;
+		pixel_format.cAccumAlphaBits = 16;
 		pixel_format.iLayerType = PFD_MAIN_PLANE;
 
 		//===== Registering the window details for validation =====//

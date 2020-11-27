@@ -2,7 +2,7 @@
 
 namespace Hyphen
 {
-	void VertexBuffer::load(Vertex * data)
+	void VertexBuffer::load(Vertex const & data)
 	{
 		push((GLuint) 0);
 		cache.push(data);

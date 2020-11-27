@@ -6,7 +6,7 @@ namespace Hyphen
 		va(), vb(), ib(), layout()
 	{}
 
-	void Mesh::load(Vertex * vertices)
+	void Mesh::load(Vertex const & vertices)
 	{
 		drawn_obj_count = 0;// vertices->get_index_buffer()->get_size();
 

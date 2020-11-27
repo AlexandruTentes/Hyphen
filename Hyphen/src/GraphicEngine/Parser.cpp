@@ -137,6 +137,7 @@ namespace Hyphen
 		}
 
 		Model model(vertex, normal, texture, index);
+		//model.print();
 		return model;
 	}
 }

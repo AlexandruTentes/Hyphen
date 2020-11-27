@@ -40,24 +40,19 @@ namespace Hyphen
 			capacity = default_capacity;
 			data = new T[capacity];
 		};
-		DynamicObject(unsigned int size)
+		DynamicObject(unsigned int const & size)
 		{
 			capacity = size;
 			data = new T[capacity];
 		};
-		DynamicObject(T * data, unsigned int size) // Create an array object with the given size and data at once (uses memcpy)
+		DynamicObject(T * data, unsigned int const & size) // Create an array object with the given size and data at once (uses memcpy)
 		{
 			capacity = size;
 			this->data = new T[capacity];
 			memcpy(this->data, data, size * sizeof(data[0]));
 		};
 
-		void push(T * item) // Pushes items to the array object one at a time with resize check at each item
-		{
-			for (int i = 0; i < sizeof(* item) / sizeof(item[0]); i++)
-				push(item[i]);
-		};
-		void push(T item) // Pushes an item at the end of the array, always
+		void push(T const & item) // Pushes an item at the end of the array, always
 		{
 			if (is_full())
 				return;
@@ -67,15 +62,8 @@ namespace Hyphen
 
 			size++;
 		};
-		void push(T item, int index) // Pushes one item by index at a time, if the item is already on the index, override
-		{
-			if (is_full())
-				return;
 
-			for (int i = 0; i < sizeof(*item) / sizeof(item[0]); i++)
-				push(item[i]);
-		};
-		void remove(unsigned int index)
+		void remove(unsigned int const & index)
 		{
 			if (index >= size)
 				return;
@@ -100,7 +88,7 @@ namespace Hyphen
 
 		bool is_full() { return max_capacity == 0 ? false : size == max_capacity; };
 		bool is_empty() { return size == 0; };
-		T get_one(unsigned int index) { return data[index]; };
+		T get_one(unsigned int const & index) { return data[index]; };
 		T * get_all() { return data; };
 		unsigned int get_size() { return size; };
 		unsigned int get_capacity() { return capacity; };

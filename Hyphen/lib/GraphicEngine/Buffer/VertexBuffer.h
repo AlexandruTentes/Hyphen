@@ -10,7 +10,7 @@ namespace Hyphen
 	class VertexBuffer : public DynamicObject<GLuint>
 	{
 	public:
-		void load(Vertex * vertex);
+		void load(Vertex const & vertex);
 		void generate_buffers();
 		void bind();
 		void unbind() const;

@@ -16,7 +16,7 @@ namespace Hyphen
 		Mesh();
 
 		void draw();
-		void load(Vertex * vertices);
+		void load(Vertex const & vertices);
 
 		virtual ~Mesh();
 	private:

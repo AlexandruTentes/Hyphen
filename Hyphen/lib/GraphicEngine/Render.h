@@ -13,7 +13,7 @@ namespace Hyphen
 	public:
 		Render(Vector3d<float> * arr, int size);
 
-		void draw(Vertex * vertices, Mesh * mesh, Shader * shader);
+		void draw(Vertex const & vertices, Mesh * mesh, Shader * shader);
 
 		~Render();
 	private:
