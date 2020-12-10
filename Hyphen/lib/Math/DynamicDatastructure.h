@@ -21,15 +21,17 @@ namespace Hyphen
 			max_capacity = data.max_capacity;
 			capacity = data.capacity;
 			size = data.size;
+			initialized_capacity = data.initialized_capacity;
 
 			this->data = new T[size];
 			memcpy(this->data, data.data, size * sizeof(T));
 		}
 		DynamicObject(DynamicObject && data)	//Move constructor which steals data 
 		{
-			max_capacity = data.max;
+			max_capacity = data.max_capacity;
 			capacity = data.capacity;
 			size = data.size;
+			initialized_capacity = data.initialized_capacity;
 
 			this->data = data.data;
 			data.data = nullptr;
@@ -40,32 +42,22 @@ namespace Hyphen
 			capacity = default_capacity;
 			data = new T[capacity];
 		};
-		DynamicObject(unsigned int size)
+		DynamicObject(unsigned int const & size)
 		{
 			capacity = size;
+			initialized_capacity = size;
 			data = new T[capacity];
 		};
-		DynamicObject(T * data, unsigned int size) // Create an array object with the given size and data at once (uses memcpy)
+		DynamicObject(T * data, unsigned int const & size) // Create an array object with the given size and data at once (uses memcpy)
 		{
 			capacity = size;
+			initialized_capacity = size;
 			this->data = new T[capacity];
 			memcpy(this->data, data, size * sizeof(data[0]));
 		};
 
-		void push(T * item) // Pushes items to the array object one at a time with resize check at each item
+		void push(T const & item) // Pushes an item at the end of the array, always
 		{
-			if (is_full())
-				return;
-
-			resize();
-			data[size] = item;
-			size++;
-		};
-		void push(T item) // Pushes an item at the end of the array, always
-		{
-			if (item == NULL || item == nullptr)
-				return;
-
 			if (is_full())
 				return;
 
@@ -74,15 +66,32 @@ namespace Hyphen
 
 			size++;
 		};
-		void push(T item, int index) // Pushes one item by index at a time, if the item is already on the index, override
-		{
-			if (is_full())
-				return;
 
-			for (int i = 0; i < sizeof(*item) / sizeof(item[0]); i++)
-				push(item[i]);
-		};
-		void remove(unsigned int index)
+		bool has(T const& item)
+		{
+			for (unsigned int i = 0; i < size; i++)
+				if (data[i] == item)
+					return true;
+
+			return false;
+		}
+
+		void remake()
+		{
+			delete[] data;
+
+			size = 0;
+			capacity = initialized_capacity != 0 ? initialized_capacity : default_capacity;
+
+			data = new T[capacity];
+		}
+
+		void clear()
+		{
+			size = 0;
+		}
+
+		void remove(unsigned int const & index)
 		{
 			if (index >= size)
 				return;
@@ -107,9 +116,10 @@ namespace Hyphen
 
 		bool is_full() { return max_capacity == 0 ? false : size == max_capacity; };
 		bool is_empty() { return size == 0; };
-		T get_one(unsigned int index) { return size == 0 || index >= size ? nullptr : data[index]; };
+		T & get_one(unsigned int const & index) { return data[index]; };
 		T * get_all() { return data; };
 		unsigned int get_size() { return size; };
+		unsigned int get_capacity() { return capacity; };
 
 		DynamicObject & operator = (DynamicObject const & data)	// Copy assignment
 		{
@@ -131,7 +141,7 @@ namespace Hyphen
 			if (this == &data)
 				return *this;
 
-			delete[] data;
+			delete[] this->data;
 
 			capacity = data.capacity;
 			size = data.size;
@@ -164,8 +174,36 @@ namespace Hyphen
 		unsigned int max_capacity = 0;
 		unsigned int capacity;
 		unsigned int size = 0;
+		unsigned int initialized_capacity = 0;
 
 		T * data;
+	};
+
+	///////////////////////////////////////////////////////////
+	//===== Class which stores a filename and it's path =====//
+	///////////////////////////////////////////////////////////
+
+	class FileAndPath
+	{
+		//===== Public functions =====//
+	public:
+		FileAndPath() {};
+		FileAndPath(std::string const& file, unsigned int const& extension_index, std::string const& path)
+		{
+			add(file, extension_index, path);
+		};
+		void add(std::string const& file, unsigned int const& extension_index, std::string const& path)
+		{
+			this->file = file;
+			this->path = path;
+			this->extension_index = extension_index;
+		};
+
+		virtual ~FileAndPath() = default;
+	public:
+		std::string file;
+		unsigned int extension_index;
+		std::string path;
 	};
 
 	//////////////////////////////////////////
@@ -183,6 +221,8 @@ namespace Hyphen
 		void pop() { remove(size - 1, ); };
 		T peek(unsigned int index) { return get_one(index); };
 		T peek() { return get_one(size - 1); };
+
+		bool operator != (unsigned int n) { return size != n; }
 
 		virtual ~Stack() = default;
 	};

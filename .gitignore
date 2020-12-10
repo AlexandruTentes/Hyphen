@@ -355,6 +355,36 @@ MigrationBackup/
 
 3DShooter/3DShooter.sln
 
-*.dll
-
 *.sln
+
+*.json
+
+*.ninja
+
+*.cmake
+
+Hyphen/thirdparty/glm/out/build/x64-Debug (default)/CMakeCache.txt
+
+*.bin
+
+Hyphen/thirdparty/glm/out/build/x64-Debug (default)/CMakeFiles/3.18.20081302-MSVC_2/CompilerIdC/CMakeCCompilerId.c
+
+Hyphen/thirdparty/glm/out/build/x64-Debug (default)/CMakeFiles/3.18.20081302-MSVC_2/CompilerIdC/CMakeCCompilerId.exe
+
+Hyphen/thirdparty/glm/out/build/x64-Debug (default)/CMakeFiles/3.18.20081302-MSVC_2/CompilerIdCXX/CMakeCXXCompilerId.cpp
+
+Hyphen/thirdparty/glm/out/build/x64-Debug (default)/CMakeFiles/3.18.20081302-MSVC_2/CompilerIdCXX/CMakeCXXCompilerId.exe
+
+*.check_cache
+
+Hyphen/thirdparty/glm/out/build/x64-Debug (default)/CMakeFiles/ShowIncludes/foo.h
+
+Hyphen/thirdparty/glm/out/build/x64-Debug (default)/CMakeFiles/ShowIncludes/
+
+Hyphen/thirdparty/glm/out/build/x64-Debug (default)/CMakeFiles/
+
+Hyphen/thirdparty/glm/out/build/x64-Debug (default)/
+
+*.cpp~Updated upstream
+
+*.cpp~Stashed changes

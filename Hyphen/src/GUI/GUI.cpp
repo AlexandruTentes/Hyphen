@@ -16,6 +16,10 @@ namespace Hyphen
 #elif defined(DIRECTX)
 		//DirectX init
 #endif
+		if (model != nullptr)
+			return;
+
+		model = new Renderer();
 	}
 
 	void GUI::detach()
@@ -26,6 +30,7 @@ namespace Hyphen
 #ifdef OPENGL
 		ImGui_ImplOpenGL3_DestroyDeviceObjects();
 #endif
+		delete[] model;
 	}
 
 	void GUI::update()
@@ -43,9 +48,31 @@ namespace Hyphen
 #endif
 		ImGui::NewFrame();
 
-		//Temporary
-		static bool show = true;
-		ImGui::ShowDemoWindow(&show);
+		//Begin the GUI implementation
+		ImGui::Begin(window_title);
+
+		bool open_popup = false;
+		for (unsigned int i = 0; i < folder.files.get_size(); i++)
+		{
+			open_popup |= ImGui::Button(folder.files.get_one(i).file.c_str());
+			if (open_popup)
+			{
+				read_raw_model(folder.files.get_one(i));
+				model->render(models.get(i));
+				ImGui::OpenPopup((folder.files.get_one(i).file + " Transformation Matrix").c_str());
+			}
+			if (ImGui::BeginPopup((folder.files.get_one(i).file + " Transformation Matrix").c_str()))
+			{
+				ImGui::Text(folder.files.get_one(i).file.c_str());
+				model->draw(models.get(i));
+				models.get(i).GUI();
+
+				ImGui::EndPopup();
+			}
+		}
+
+		ImGui::End();
+		//End GUI
 
 		ImGui::Render();
 #ifdef OPENGL

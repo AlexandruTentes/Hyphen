@@ -16,9 +16,9 @@ namespace Hyphen
 		unsigned short int width;
 		unsigned short int height;
 		std::string title;
-
-		WindowSpecs(const std::string & title = "Dev Window", 
-			unsigned short int width = 1200, unsigned short int height = 7002) :
+		
+		WindowSpecs(const std::string & title = window_title,
+			unsigned short int width = Hyphen::width, unsigned short int height = Hyphen::height) :
 			title(title), width(width), height(height) {}
 	};
 
@@ -50,7 +50,7 @@ namespace Hyphen
 				}
 			}
 
-			if(!ignore)
+			if (!ignore && layer_stack.get_layers() != NULL && layer_stack.get_layers().peek() != nullptr)
 				//Only handle the top of the stack element
 				layer_stack.get_layers().peek()->event(e);
 
