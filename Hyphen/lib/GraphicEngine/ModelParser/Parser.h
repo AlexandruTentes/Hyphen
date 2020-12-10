@@ -10,5 +10,5 @@
 
 namespace Hyphen
 {
-	void read_raw_model(Path & model);
+	void read_raw_model(FileAndPath& file);
 }

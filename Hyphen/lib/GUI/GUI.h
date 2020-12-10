@@ -5,7 +5,7 @@
 #include "../Math/Math.h"
 #include "../GraphicEngine/Render.h"
 #include "../GraphicEngine/Collection/ModelCollection.h"
-#include "../GraphicEngine/Collection/FolderDataCollection.h"
+#include "../GraphicEngine/Collection/FolderData.h"
 #include "../GraphicEngine/ModelParser/Parser.h"
 
 #define GUI_H_
@@ -44,7 +44,7 @@ namespace Hyphen
 		virtual ~GUI() = default;
 	private:
 		float prev_time = 0.0f;
-		FolderDataCollection& folder = FolderDataCollection::get_instance();
+		FolderData& folder = FolderData::get_instance();
 		ModelCollection& models = ModelCollection::get_instance();
 		Renderer* model = nullptr;
 	};

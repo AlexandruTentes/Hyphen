@@ -2,14 +2,14 @@
 
 namespace Hyphen
 {
-	void read_raw_model(Path & path)
+	void read_raw_model(FileAndPath& file)
 	{
-		switch (path.extension_index)
+		switch (file.extension_index)
 		{
 		case OBJ:
 		{
 			OBJParser obj;
-			obj.read_extension(path.path + "\\" + path.model_file, path.model_file);
+			obj.read_extension(file.path + "\\" + file.file, file.file);
 		}
 		}
 	}

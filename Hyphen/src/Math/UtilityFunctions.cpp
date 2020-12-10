@@ -2,21 +2,20 @@
 
 namespace Hyphen
 {
-	void get_files_directory(std::string & path, std::string const& identifier)
+	void get_files_directory(DynamicObject<FileAndPath>& files, std::string& path, std::string* extension, int const& size)
 	{
-		FolderDataCollection& folder = FolderDataCollection::get_instance();
-		FolderData aux;
 		std::string original_path = path;
 		path += "\\";
 		int i = 0;
 		int j = 0;
+		bool add_data = true;
 
 		WIN32_FIND_DATA file;
 		HANDLE file_handler;
 
 		try
 		{
-			if ((file_handler = FindFirstFile((path + "*").c_str(), & file)) != INVALID_HANDLE_VALUE)
+			if ((file_handler = FindFirstFile((path + "*").c_str(), &file)) != INVALID_HANDLE_VALUE)
 			{
 				while (true)
 				{
@@ -26,46 +25,34 @@ namespace Hyphen
 					if (!grep(file.cFileName, ".."))
 					{
 						if (!grep(file.cFileName, "."))
-						{
-							aux.path = original_path;
-							aux.folder_name = file.cFileName;
-							aux.identifier = identifier;
-							folder.folder_data.push(std::move(aux));
-							aux.files.remake();
+							get_files_directory(files, path + file.cFileName, extension, size);
 
-							get_files_directory(path + file.cFileName);
+						for (j = 0; j < size; j++)
+						{
+							add_data = false;
+
+							if (grep(file.cFileName, extension[j], false))
+							{
+								add_data = true;
+								break;
+							}
 						}
 
-						aux.files.push(std::move(File(file.cFileName. file.)));
-
-						i++;
+						if (add_data)
+						{
+							FileAndPath aux(file.cFileName, j, original_path);
+							files.push(aux);
+							i++;
+						}
 					}
 				}
 
 				FindClose(file_handler);
 			}
 		}
-		catch (const std::exception & err)
+		catch (const std::exception& err)
 		{
 			std::cerr << "\tEXCEPTION IN READING FOLDER" << "\n\t\t" << err.what() << std::endl;
-		}
-	}
-
-	void read_models(std::string* extension, unsigned int extension_size, std::string* texture, unsigned int texture_size)
-	{
-		ModelPath aux;
-		FolderDataCollection& folder = FolderDataCollection::get_instance();
-
-		for (unsigned int i = 0; i < folder.folder_data.get_size(); i++)
-		{
-			if (folder.folder_data.get_one(i).identifier == model_path)
-			{
-				for (unsigned j = 0; j < extension_size; j++)
-				{
-					for(unsigned int k = 0; )
-				}
-				
-			}
 		}
 	}
 

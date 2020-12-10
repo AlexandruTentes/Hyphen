@@ -5,6 +5,7 @@
 #include "../lib/GraphicEngine/Buffer/IndexBuffer.h"
 #include "../lib/GraphicEngine/Buffer/VertexBufferLayout.h"
 #include "../lib/GraphicEngine/VertexArray.h"
+#include "../lib/GraphicEngine/Collection/FolderData.h"
 
 namespace Hyphen
 {
@@ -17,7 +18,9 @@ namespace Hyphen
 		if (!app_window->init())
 			std::cerr << "Error at window initialization!\n";
 
-		get_files_directory(std::string(model_path), model_extension);
+		DynamicObject<FileAndPath> files;
+		get_files_directory(files, std::string(model_path), model_extension, sizeof(model_extension) / sizeof(model_extension[0]));
+		FolderData::get_instance().files = files;
 				
 		//EngineCamera * camera = new EngineCamera(view);
 		//layer_stack.push_overlay(camera);

@@ -52,18 +52,18 @@ namespace Hyphen
 		ImGui::Begin(window_title);
 
 		bool open_popup = false;
-		for (unsigned int i = 0; i < folder.folders.get_size(); i++)
+		for (unsigned int i = 0; i < folder.files.get_size(); i++)
 		{
-			open_popup |= ImGui::Button(folder.folders.get_one(i).model_file.c_str());
+			open_popup |= ImGui::Button(folder.files.get_one(i).file.c_str());
 			if (open_popup)
 			{
-				read_raw_model(folder.folders.get_one(i));
+				read_raw_model(folder.files.get_one(i));
 				model->render(models.get(i));
-				ImGui::OpenPopup((folder.folders.get_one(i).model_file + " Transformation Matrix").c_str());
+				ImGui::OpenPopup((folder.files.get_one(i).file + " Transformation Matrix").c_str());
 			}
-			if (ImGui::BeginPopup((folder.folders.get_one(i).model_file + " Transformation Matrix").c_str()))
+			if (ImGui::BeginPopup((folder.files.get_one(i).file + " Transformation Matrix").c_str()))
 			{
-				ImGui::Text(folder.folders.get_one(i).model_file.c_str());
+				ImGui::Text(folder.files.get_one(i).file.c_str());
 				model->draw(models.get(i));
 				models.get(i).GUI();
 

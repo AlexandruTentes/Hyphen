@@ -179,6 +179,33 @@ namespace Hyphen
 		T * data;
 	};
 
+	///////////////////////////////////////////////////////////
+	//===== Class which stores a filename and it's path =====//
+	///////////////////////////////////////////////////////////
+
+	class FileAndPath
+	{
+		//===== Public functions =====//
+	public:
+		FileAndPath() {};
+		FileAndPath(std::string const& file, unsigned int const& extension_index, std::string const& path)
+		{
+			add(file, extension_index, path);
+		};
+		void add(std::string const& file, unsigned int const& extension_index, std::string const& path)
+		{
+			this->file = file;
+			this->path = path;
+			this->extension_index = extension_index;
+		};
+
+		virtual ~FileAndPath() = default;
+	public:
+		std::string file;
+		unsigned int extension_index;
+		std::string path;
+	};
+
 	//////////////////////////////////////////
 	//===== Stack object datastructure =====//
 	//////////////////////////////////////////
