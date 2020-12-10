@@ -2,22 +2,29 @@
 
 #define RENDER_H_
 
+#include "../CompiledHeaders.h"
 #include "Type/Vertex.h"
 #include "Mesh.h"
 #include "Shader.h"
+#include "Type/Model.h"
 
 namespace Hyphen
 {
-	class Render
+	class Renderer
 	{
 	public:
-		Render(Vector3d<float> * arr, int size);
+		Renderer() {};
 
-		void draw(Vertex const & vertices, Mesh * mesh, Shader * shader);
+		void render(Model& m);
+		void draw(Model& m);
 
-		~Render();
+		virtual ~Renderer() = default;
 	private:
-		int size = 0;
-		Vector3d<float> * data;
+		Matrix4d<float> view;
+		Shader shader;
+		VertexBuffer vb;
+		IndexBuffer ib;
+		VertexBufferLayout layout;
+		VertexArray va;
 	};
 }

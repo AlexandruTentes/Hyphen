@@ -21,6 +21,7 @@ namespace Hyphen
 			max_capacity = data.max_capacity;
 			capacity = data.capacity;
 			size = data.size;
+			initialized_capacity = data.initialized_capacity;
 
 			this->data = new T[size];
 			memcpy(this->data, data.data, size * sizeof(T));
@@ -30,6 +31,7 @@ namespace Hyphen
 			max_capacity = data.max_capacity;
 			capacity = data.capacity;
 			size = data.size;
+			initialized_capacity = data.initialized_capacity;
 
 			this->data = data.data;
 			data.data = nullptr;
@@ -43,11 +45,13 @@ namespace Hyphen
 		DynamicObject(unsigned int const & size)
 		{
 			capacity = size;
+			initialized_capacity = size;
 			data = new T[capacity];
 		};
 		DynamicObject(T * data, unsigned int const & size) // Create an array object with the given size and data at once (uses memcpy)
 		{
 			capacity = size;
+			initialized_capacity = size;
 			this->data = new T[capacity];
 			memcpy(this->data, data, size * sizeof(data[0]));
 		};
@@ -62,6 +66,30 @@ namespace Hyphen
 
 			size++;
 		};
+
+		bool has(T const& item)
+		{
+			for (unsigned int i = 0; i < size; i++)
+				if (data[i] == item)
+					return true;
+
+			return false;
+		}
+
+		void remake()
+		{
+			delete[] data;
+
+			size = 0;
+			capacity = initialized_capacity != 0 ? initialized_capacity : default_capacity;
+
+			data = new T[capacity];
+		}
+
+		void clear()
+		{
+			size = 0;
+		}
 
 		void remove(unsigned int const & index)
 		{
@@ -88,7 +116,7 @@ namespace Hyphen
 
 		bool is_full() { return max_capacity == 0 ? false : size == max_capacity; };
 		bool is_empty() { return size == 0; };
-		T get_one(unsigned int const & index) { return data[index]; };
+		T & get_one(unsigned int const & index) { return data[index]; };
 		T * get_all() { return data; };
 		unsigned int get_size() { return size; };
 		unsigned int get_capacity() { return capacity; };
@@ -113,7 +141,7 @@ namespace Hyphen
 			if (this == &data)
 				return *this;
 
-			delete[] data;
+			delete[] this->data;
 
 			capacity = data.capacity;
 			size = data.size;
@@ -146,36 +174,9 @@ namespace Hyphen
 		unsigned int max_capacity = 0;
 		unsigned int capacity;
 		unsigned int size = 0;
+		unsigned int initialized_capacity = 0;
 
 		T * data;
-	};
-
-	///////////////////////////////////////////////////////////
-	//===== Class which stores a filename and it's path =====//
-	///////////////////////////////////////////////////////////
-
-	class FileAndPath
-	{
-		//===== Public functions =====//
-	public:
-		FileAndPath();
-
-		void add(std::string s, std::string p);
-
-		~FileAndPath();
-
-		//===== Protected functions =====//
-	protected:
-		void resize();
-
-		//===== Public variables =====//
-	public:
-		const int default_capacity = 4;
-		int capacity;
-
-		int size = 0;
-		std::string * file;
-		std::string * path;
 	};
 
 	//////////////////////////////////////////

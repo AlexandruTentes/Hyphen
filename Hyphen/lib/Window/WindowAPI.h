@@ -50,7 +50,7 @@ namespace Hyphen
 				}
 			}
 
-			if(!ignore && layer_stack.get_layers() != NULL && layer_stack.get_layers().peek() != nullptr)
+			if (!ignore && layer_stack.get_layers() != NULL && layer_stack.get_layers().peek() != nullptr)
 				//Only handle the top of the stack element
 				layer_stack.get_layers().peek()->event(e);
 

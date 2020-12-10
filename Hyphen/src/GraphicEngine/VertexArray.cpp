@@ -9,9 +9,7 @@ namespace Hyphen
 
 	void VertexArray::add_buffer(VertexBuffer * vertex_buffer, IndexBuffer * index_buffer, VertexBufferLayout * layout)
 	{
-		bind();
 		vertex_buffer->bind();
-		index_buffer->bind();
 
 		_VertexBufferLayout * data = layout->get_all();
 		GLuint offset = 0;
@@ -25,10 +23,6 @@ namespace Hyphen
 			offset += data[i].size * get_sizeof_gltype(data[i].type);
 			size++;
 		}
-
-		vertex_buffer->unbind();
-		index_buffer->unbind();
-		unbind();
 	}
 
 	void VertexArray::bind()

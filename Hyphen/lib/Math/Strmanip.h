@@ -75,6 +75,12 @@ namespace Hyphen
 
     //end of replace()
 
+    //to_lower() function returns a string of the original string but with all characters in lower case
+
+    extern std::string to_lower(std::string input);
+
+    //end of to_lower()
+
     //replace_duplicate() replaces all duplicates of a string with another given one
 
     extern std::string replace_duplicate(std::string input_string, std::string to_replace, std::string replace_with);
@@ -84,8 +90,8 @@ namespace Hyphen
     //
     //  file read/write functions
     //
-
-    extern std::string read(std::string str, bool * lookup = nullptr, void(*handler)(std::string &) = 0, bool to_output = true,
+    
+    extern std::string read(std::string str, bool * lookup = nullptr, std::function<void(std::string&)> handler = 0, bool to_output = true,
 		bool get_word = false, char ignore_char = '\0');
     extern std::string read(std::string str, std::string bookmark, int bookmark_no, char eof);
 
@@ -97,7 +103,7 @@ namespace Hyphen
 
     //grep() function returns 1 if the key string matches the main string and 0 otherwise
 
-    extern int grep(std::string str, std::string key);
+    extern int grep(std::string str, std::string key, bool case_sensitive = true);
     //end of fstream functions
 
     //

@@ -22,5 +22,25 @@ namespace Hyphen
 	static const char * window_title = "Dev Env";
 	static const char * shader_path = "Shader";
 	static const char * model_path = "Model";
-	static const float PI = 3.141592653f;
+
+	static std::string extension[] = 
+	{ 
+		".vs", ".fs" 
+	};
+
+	static std::string model_extension[] =
+	{
+		".obj"
+	};
+
+	static std::string texture_extension[] =
+	{
+		".png"
+	};
+
+	//===== Model file extension =====//
+	enum ModelExtension
+	{
+		OBJ
+	};
 }

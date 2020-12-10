@@ -1,3 +1,5 @@
+#include <GL/glew.h>
+
 #include "Hyphen.h"
 #include "../lib/Layers.h"
 #include "../lib/Event.h"

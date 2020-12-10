@@ -10,8 +10,11 @@
 
 #include "../thirdparty/glm/glm.hpp"
 #include "../thirdparty/glm/gtx/transform.hpp"
+#include "../thirdparty/glm/gtc/type_ptr.hpp"
+#include "../thirdparty/glm/gtc/matrix_transform.hpp"
 
 #include "GlobalVariables.h"
+#include "Math/UtilityMacros.h"
 
 //////////////////////////////////
 //===== Platform libraries =====//

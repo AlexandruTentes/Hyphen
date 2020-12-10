@@ -16,6 +16,10 @@ namespace Hyphen
 #elif defined(DIRECTX)
 		//DirectX init
 #endif
+		if (model != nullptr)
+			return;
+
+		model = new Renderer();
 	}
 
 	void GUI::detach()
@@ -26,6 +30,7 @@ namespace Hyphen
 #ifdef OPENGL
 		ImGui_ImplOpenGL3_DestroyDeviceObjects();
 #endif
+		delete[] model;
 	}
 
 	void GUI::update()
@@ -46,11 +51,25 @@ namespace Hyphen
 		//Begin the GUI implementation
 		ImGui::Begin(window_title);
 
-		ImGui::SliderFloat("Scale", & temporary_globals::get_instance().scale, 0, 1);
-		ImGui::SliderFloat("Rotation x", & temporary_globals::get_instance().rotation_x, 0, 360);
-		ImGui::SliderFloat("Rotation y", & temporary_globals::get_instance().rotation_y, 0, 360);
-		ImGui::SliderFloat("Rotation z", & temporary_globals::get_instance().rotation_z, 0, 360);
-		ImGui::SliderFloat3("Position", temporary_globals::get_instance().translation, -1.0, 1.0);
+		bool open_popup = false;
+		for (unsigned int i = 0; i < folder.folders.get_size(); i++)
+		{
+			open_popup |= ImGui::Button(folder.folders.get_one(i).model_file.c_str());
+			if (open_popup)
+			{
+				read_raw_model(folder.folders.get_one(i));
+				model->render(models.get(i));
+				ImGui::OpenPopup((folder.folders.get_one(i).model_file + " Transformation Matrix").c_str());
+			}
+			if (ImGui::BeginPopup((folder.folders.get_one(i).model_file + " Transformation Matrix").c_str()))
+			{
+				ImGui::Text(folder.folders.get_one(i).model_file.c_str());
+				model->draw(models.get(i));
+				models.get(i).GUI();
+
+				ImGui::EndPopup();
+			}
+		}
 
 		ImGui::End();
 		//End GUI

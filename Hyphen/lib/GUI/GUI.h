@@ -3,6 +3,10 @@
 #include "../CompiledHeaders.h"
 #include "../Layer/Overlay.h"
 #include "../Math/Math.h"
+#include "../GraphicEngine/Render.h"
+#include "../GraphicEngine/Collection/ModelCollection.h"
+#include "../GraphicEngine/Collection/FolderDataCollection.h"
+#include "../GraphicEngine/ModelParser/Parser.h"
 
 #define GUI_H_
 
@@ -19,17 +23,6 @@
 
 namespace Hyphen
 {
-	struct temporary_globals
-	{
-		SINGLETONIZE(temporary_globals)
-
-		float scale = 1.0f;
-		float rotation_x = 0.0f;
-		float rotation_y = 0.0f;
-		float rotation_z = 0.0f;
-		float translation[3] = { 0.0f, 0.0f, 0.0f };
-	};
-
 	class GUI : public Overlay
 	{
 	public:
@@ -49,5 +42,10 @@ namespace Hyphen
 		void on_key_typed(KeyTyped & e);
 
 		virtual ~GUI() = default;
+	private:
+		float prev_time = 0.0f;
+		FolderDataCollection& folder = FolderDataCollection::get_instance();
+		ModelCollection& models = ModelCollection::get_instance();
+		Renderer* model = nullptr;
 	};
 }

@@ -8,10 +8,14 @@
 
 namespace Hyphen
 {
-	class Index : public DynamicObject<Matrix4d<int>>
+	class Index
 	{
 	public:
 		bool has_fourth = false;
-		void add(Matrix4d<int> index);
+		DynamicObject<int> vertex;
+		DynamicObject<int> texture;
+		DynamicObject<int> normal;
+
+		void add(Matrix4d<int> const & index);
 	};
 }

@@ -313,6 +313,20 @@ namespace Hyphen
 		}
 	}
 
+	std::string to_lower(std::string input)
+	{
+		std::string output = "";
+		int i = 0;
+
+		while (input[i] != '\0')
+		{
+			output += input[i] + (input[i] >= 65 && input[i] <= 90 ? 32 : 0);
+			i++;
+		}
+
+		return output;
+	}
+
 	std::string replace_duplicate(std::string input_string, std::string to_replace, std::string replace_with)
 	{
 		try
@@ -373,7 +387,7 @@ namespace Hyphen
 		}
 	}
 
-	std::string read(std::string str, bool * lookup, void(*handler)(std::string &),
+	std::string read(std::string str, bool * lookup, std::function<void(std::string&)> handler,
 		bool to_output, bool get_word, char ignore_char)
 	{
 		std::string output = "";
@@ -382,6 +396,7 @@ namespace Hyphen
 		short unsigned int print = 1;
 		short unsigned int ignore = 0;
 		bool duplicate = false;
+		char c = '\0';
 
 		try
 		{
@@ -390,35 +405,18 @@ namespace Hyphen
 			if (fout.fail())
 				throw std::exception(("Cannot open file with path: " + str).c_str());
 
-			char c = fout.get();
+			c = fout.get();
 
 			while (fout.good())
 			{
-				//Branchless if(c == ignore_char) then c = true else retain previous value
-				ignore = (c == ignore_char) * !ignore;
-				//Branchless if(c == '\n') then ignore = false else retain the previous value
-				ignore = !(c == '\n') * ignore;
-
-				if (lookup && lookup[c] && !duplicate)
+				if (word != "" && get_word && lookup && lookup[c])
 				{
-					print = 1;
-					duplicate = true;
-				}
-
-				if (!ignore && get_word && (lookup && lookup[c] || c == '\n'))
-				{
-					if (print)
-					{
-						handler(word);
-						print = 0;
-					}
+					handler(word);
 					word = "";
 				}
-				else if (!ignore && get_word)
-				{
-					word += c;
-					duplicate = false;
-				}
+				else 
+					if(get_word && lookup && !lookup[c])
+						word += c;
 
 				output += (to_output) * c;
 				c = fout.get();
@@ -516,7 +514,7 @@ namespace Hyphen
 		}
 	}
 
-	int grep(std::string str, std::string key)
+	int grep(std::string str, std::string key, bool case_sensitive)
 	{
 		try
 		{
@@ -524,6 +522,12 @@ namespace Hyphen
 			int j = 0;
 			bool check = false;
 			int response = 0;
+
+			if (!case_sensitive)
+			{
+				str = to_lower(str);
+				key = to_lower(key);
+			}
 
 			while (str[i] != '\0')
 			{

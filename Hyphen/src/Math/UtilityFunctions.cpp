@@ -2,19 +2,21 @@
 
 namespace Hyphen
 {
-	void get_files_recursive(FileAndPath * files, std::string path, std::string * extenstion, int size)
+	void get_files_directory(std::string & path, std::string const& identifier)
 	{
+		FolderDataCollection& folder = FolderDataCollection::get_instance();
+		FolderData aux;
 		std::string original_path = path;
 		path += "\\";
 		int i = 0;
-		bool add_data = true;
+		int j = 0;
 
 		WIN32_FIND_DATA file;
 		HANDLE file_handler;
 
 		try
 		{
-			if ((file_handler = FindFirstFile((path + "*").c_str(), &file)) != INVALID_HANDLE_VALUE)
+			if ((file_handler = FindFirstFile((path + "*").c_str(), & file)) != INVALID_HANDLE_VALUE)
 			{
 				while (true)
 				{
@@ -24,24 +26,19 @@ namespace Hyphen
 					if (!grep(file.cFileName, ".."))
 					{
 						if (!grep(file.cFileName, "."))
-							get_files_recursive(files, path + file.cFileName, extenstion, size);
-
-						for (int j = 0; j < size; j++)
 						{
-							add_data = false;
+							aux.path = original_path;
+							aux.folder_name = file.cFileName;
+							aux.identifier = identifier;
+							folder.folder_data.push(std::move(aux));
+							aux.files.remake();
 
-							if (grep(file.cFileName, extenstion[j]))
-							{
-								add_data = true;
-								break;
-							}
+							get_files_directory(path + file.cFileName);
 						}
 
-						if (add_data)
-						{
-							files->add(file.cFileName, original_path);
-							i++;
-						}
+						aux.files.push(std::move(File(file.cFileName. file.)));
+
+						i++;
 					}
 				}
 
@@ -54,35 +51,22 @@ namespace Hyphen
 		}
 	}
 
-	FileAndPath get_files_directory(std::string root, std::string * extension, int size)
+	void read_models(std::string* extension, unsigned int extension_size, std::string* texture, unsigned int texture_size)
 	{
-		FileAndPath files = FileAndPath();
+		ModelPath aux;
+		FolderDataCollection& folder = FolderDataCollection::get_instance();
 
-		get_files_recursive(&files, root, extension, size);
-
-		return files;
-	}
-
-	FileAndPath get_files_directory(std::string root, std::string extension)
-	{
-		FileAndPath files = FileAndPath();
-
-		std::string * temp = new std::string[1];
-		temp[0] = extension;
-
-		get_files_recursive(&files, root, temp, 1);
-		delete[] temp;
-
-		return files;
-	}
-
-	FileAndPath get_files_directory(std::string root)
-	{
-		FileAndPath files = FileAndPath();
-
-		get_files_recursive(&files, root, {});
-
-		return files;
+		for (unsigned int i = 0; i < folder.folder_data.get_size(); i++)
+		{
+			if (folder.folder_data.get_one(i).identifier == model_path)
+			{
+				for (unsigned j = 0; j < extension_size; j++)
+				{
+					for(unsigned int k = 0; )
+				}
+				
+			}
+		}
 	}
 
 	int get_sizeof_gltype(unsigned int type)

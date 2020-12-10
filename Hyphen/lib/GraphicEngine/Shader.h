@@ -5,8 +5,7 @@
 #include "../CompiledHeaders.h"
 #include "../Math/UtilityFunctions.h"
 #include "../Math/Math.h"
-//#include "../Math/DynamicDatastructure.h"
-//#include "../Math/Strmanip.h"
+#include "../GlobalVariables.h"
 
 namespace Hyphen
 {
@@ -23,10 +22,10 @@ namespace Hyphen
 
 		void bind();
 		void unbind();
-		void load_shaders(std::string folder);
+		void load_shaders();
 		void compile_shaders();
 		void catch_shader_error(GLuint shader, GLuint flag, bool is_prog, std::string err);
-		void set_uniform4f(std::string name, float v0, float v1, float v2, float v3);
+		void set_uniform4f(std::string name, glm::vec4 const & col);
 		void set_uniform_matrix4fv(std::string name, glm::mat4 const & mat);
 		GLuint create_shader(std::string text, GLenum shader_type);
 
