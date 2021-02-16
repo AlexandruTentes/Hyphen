@@ -1,10 +1,7 @@
 #include "../lib/App.h"
 
 #include "../lib/GraphicEngine/Shader.h"
-#include "../lib/GraphicEngine/Buffer/VertexBuffer.h"
-#include "../lib/GraphicEngine/Buffer/IndexBuffer.h"
 #include "../lib/GraphicEngine/Buffer/VertexBufferLayout.h"
-#include "../lib/GraphicEngine/VertexArray.h"
 #include "../lib/GraphicEngine/Collection/FolderData.h"
 
 namespace Hyphen
@@ -13,7 +10,7 @@ namespace Hyphen
 	{
 		KeyDown kd;
 		MouseMove mv;
-		HyphenWindow * app_window = HyphenWindow::create();		
+		HyphenWindow * app_window = HyphenWindow::create();
 
 		if (!app_window->init())
 			std::cerr << "Error at window initialization!\n";
@@ -22,14 +19,11 @@ namespace Hyphen
 		get_files_directory(files, std::string(model_path), model_extension, sizeof(model_extension) / sizeof(model_extension[0]));
 		FolderData::get_instance().files = files;
 				
-		//EngineCamera * camera = new EngineCamera(view);
-		//layer_stack.push_overlay(camera);
-
 		//===== =====//
 		while (app_window->window->is_running)
 		{
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glClearColor(0.5, 0.25, 0.5, 1.0);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			/*
 			if (poll_event(&kd))
@@ -45,8 +39,6 @@ namespace Hyphen
 			app_window->window->update();
 		}
 
-		//layer_stack.pop_overlay(camera);
-		
 		delete app_window;
 	}
 }

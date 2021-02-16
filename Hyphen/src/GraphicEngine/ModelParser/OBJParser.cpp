@@ -103,12 +103,12 @@ namespace Hyphen
 		if (word == "f") read_index = 1;
 	}
 
-	void OBJParser::read_extension(std::string const & path, std::string& model_name)
+	void OBJParser::read_extension(std::string const& path, std::string& model_name, std::string const & file_root)
 	{
 		if (!models.exists(model_name))
 		{
 			read(path, ascii_lookup, std::bind(&OBJParser::parse_extension, this, std::placeholders::_1), false, true, '#');
-			models.add(std::move(Model(vertex, normal, texture, index, model_name)));
+			models.add(new Model(vertex, normal, texture, index, model_name, file_root), model_name);
 		}
 	}
 }

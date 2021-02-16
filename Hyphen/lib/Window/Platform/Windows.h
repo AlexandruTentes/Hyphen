@@ -36,11 +36,12 @@ namespace Hyphen
 		void update() override;
 		void destroy() override;
 		void show() override;
-		void resize() override;
+		void resize(unsigned int width = 0, unsigned int height = 0) override;
+		void set_cursor_pos(float x, float y) override;
+		void show_cursor(bool status) override;
 
 		void window_msg_handler();
 		void kill_window();
-		std::tuple<float, float> get_float_xy(int x, int y);
 		HWND get_handler() { return handler; }
 
 		virtual ~Windows();
@@ -50,6 +51,7 @@ namespace Hyphen
 		HDC hdc = NULL; //GDI device context
 		HWND handler = NULL; //Window handler
 		HINSTANCE hinstance = NULL; //This application's handler
+		POINT client_coords; //A POINT structure that contains client coords data
 		std::string class_name = "test_class";
 
 	public:

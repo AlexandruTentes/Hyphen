@@ -5,7 +5,6 @@
 #include "../../CompiledHeaders.h"
 #include "../Type/Model.h"
 #include "../../Math/Strmanip.h"
-#include "../Collection/ModelCollection.h"
 
 namespace Hyphen
 {
@@ -21,7 +20,7 @@ namespace Hyphen
 		Normal normal;
 		Texture texture;
 		Index index;
-		ModelCollection& models = ModelCollection::get_instance();
+		Collection<Model, std::string>& models = Collection<Model, std::string>::get_instance();
 
 		short unsigned int read_vertex = 0;
 		short unsigned int read_normal = 0;
@@ -44,7 +43,7 @@ namespace Hyphen
 
 		void parse_extension(std::string const& word);
 		void indexing(std::string const & word);
-		void read_extension(std::string const& path, std::string& model_name);
+		void read_extension(std::string const& path, std::string& model_name, std::string const & file_root);
 
 		virtual ~OBJParser() = default;
 	};

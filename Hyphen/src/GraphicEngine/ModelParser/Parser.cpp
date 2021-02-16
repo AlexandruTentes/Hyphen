@@ -9,7 +9,7 @@ namespace Hyphen
 		case OBJ:
 		{
 			OBJParser obj;
-			obj.read_extension(file.path + "\\" + file.file, file.file);
+			obj.read_extension(file.path + "\\" + file.file, file.file, file.file_root);
 		}
 		}
 	}

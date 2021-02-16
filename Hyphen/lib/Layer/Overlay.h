@@ -18,6 +18,7 @@ namespace Hyphen
 		virtual void event(Event & event) {};
 
 		void set_id(unsigned short int id) { this->id = id; };
+		void set_status(bool const& status) { handled = status; };
 		unsigned int get_id() { return id; };
 		bool get_status() { return handled; }
 

@@ -11,8 +11,8 @@ namespace Hyphen
 	//========================================================//
 	extern bool unfocused;														// Check if the window is focused
 	extern bool center_cursor_status;											// Store a flag to know if to set the cursor to center
-	extern unsigned int width, height;											// window width and height
-	extern unsigned int prev_width, prev_height;
+	extern unsigned short int width, height, half_width, half_height;			// window width and height
+	extern unsigned short int prev_width, prev_height;
 	extern int min_width, min_height;
 	extern float aspect_ratio;
 

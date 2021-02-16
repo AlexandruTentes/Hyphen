@@ -21,5 +21,6 @@ namespace Hyphen
 		GLuint get_stride() const;
 	private:
 		GLuint stride = 0;
+		bool once = false;
 	};
 }

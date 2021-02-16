@@ -16,27 +16,38 @@ namespace Hyphen
 #elif defined(DIRECTX)
 		//DirectX init
 #endif
-		if (model != nullptr)
+		if (renderer != nullptr)
 			return;
 
-		model = new Renderer();
+		renderer = new Renderer();
+		camera = new EngineCamera();
+
+		Scene * scene = new Scene(std::string("Scene0"));
+		scene->cameras["Camera0"] = camera->view;
+		scene->bound_camera = "Camera0";
+		scenes.add(scene, scene->name);
+		renderer->bound_scene = 0;
+
+		layer_stack.push_overlay(camera);
 	}
 
 	void GUI::detach()
 	{
+		layer_stack.pop_overlay(camera);
+
 #ifdef WINDOWS
 		ImGui_ImplWin32_Shutdown();
 #endif
 #ifdef OPENGL
 		ImGui_ImplOpenGL3_DestroyDeviceObjects();
 #endif
-		delete[] model;
+		delete renderer;
 	}
 
 	void GUI::update()
 	{
 		ImGuiIO & io = ImGui::GetIO();
-		handled = io.WantCaptureMouse || io.WantCaptureKeyboard;
+		handled = !(io.WantCaptureMouse || io.WantCaptureKeyboard);
 
 #ifdef OPENGL
 		ImGui_ImplOpenGL3_NewFrame();
@@ -49,27 +60,18 @@ namespace Hyphen
 		ImGui::NewFrame();
 
 		//Begin the GUI implementation
-		ImGui::Begin(window_title);
+		ImGui::SetNextWindowSize(ImVec2(0, height * 0.5));
+		ImGui::Begin(window_title, NULL, 
+			ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+		renderer->draw_scene();
 
-		bool open_popup = false;
-		for (unsigned int i = 0; i < folder.files.get_size(); i++)
+		for (unsigned int i = 0; i < features_size; i++)
 		{
-			open_popup |= ImGui::Button(folder.files.get_one(i).file.c_str());
-			if (open_popup)
-			{
-				read_raw_model(folder.files.get_one(i));
-				model->render(models.get(i));
-				ImGui::OpenPopup((folder.files.get_one(i).file + " Transformation Matrix").c_str());
-			}
-			if (ImGui::BeginPopup((folder.files.get_one(i).file + " Transformation Matrix").c_str()))
-			{
-				ImGui::Text(folder.files.get_one(i).file.c_str());
-				model->draw(models.get(i));
-				models.get(i).GUI();
 
-				ImGui::EndPopup();
-			}
 		}
+
+		// GUI for models list
+		models_gui.show(this);
 
 		ImGui::End();
 		//End GUI
@@ -95,18 +97,28 @@ namespace Hyphen
 	{
 		ImGuiIO & io = ImGui::GetIO();
 		io.MousePos = ImVec2(e.get_x(), e.get_y());
+		is_drag = is_left_click && safe == fail_safe;
+		safe += is_left_click && safe < fail_safe;
+		drag = safe == fail_safe;
 	}
 
 	void GUI::on_mouse_button_down(MouseButtonDown & e)
 	{
 		ImGuiIO & io = ImGui::GetIO();
 		io.MouseDown[e.get_button()] = true;
+		is_left_click = e.get_button() == 0;
+		dragndrop = false;
 	}
 
 	void GUI::on_mouse_button_up(MouseButtonUp & e)
 	{
 		ImGuiIO & io = ImGui::GetIO();
 		io.MouseDown[e.get_button()] = false;
+		is_drag = false;
+		is_left_click = false;
+		safe = 0;
+		dragndrop = drag;
+		drag = false;
 	}
 
 	void GUI::on_scroll(MouseScroll & e)

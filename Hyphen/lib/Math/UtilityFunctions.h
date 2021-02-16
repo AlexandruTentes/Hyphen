@@ -9,7 +9,9 @@
 
 namespace Hyphen
 {
-	void get_files_directory(DynamicObject<FileAndPath>& files, std::string& path, std::string* extension, int const& size);
+	void get_files_directory(DynamicObject<FileAndPath>& files, std::string& path, 
+		std::string* extension, int const& size, const char * file_root = nullptr);
+	void get_folder_first_children(DynamicObject<char *> & children, std::string& path);
 	int get_sizeof_gltype(unsigned int type);
 
 	template <class T> bool poll_event(T * e)

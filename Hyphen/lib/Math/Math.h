@@ -327,80 +327,35 @@ namespace Hyphen
 	template<class K>
 	static glm::mat4 get_transformation_matrix(K const & scale, K * translation, K const & x_rot, K const & y_rot, K const & z_rot)
 	{
-		/*
-		Matrix4d<K> scale_mat(scale, 0, 0, 0,
-							  0, scale, 0, 0,
-							  0, 0, scale, 0,
-							  0, 0, 0, 1);
+		glm::mat4 transform(1.0f);
+		transform = glm::translate(transform, glm::vec3(translation[0], translation[1], translation[2]));
+		transform = glm::rotate(transform, x_rot, glm::vec3(1, 0, 0));
+		transform = glm::rotate(transform, y_rot, glm::vec3(0, 1, 0));
+		transform = glm::rotate(transform, z_rot, glm::vec3(0, 0, 1));
+		transform = glm::scale(transform, glm::vec3(scale, scale, scale));
 
-		Matrix4d<K> rot_mat_x(	1, 0, 0, 0,
-								0, cos(x_rot), -sin(x_rot), 0,
-								0, sin(x_rot), cos(x_rot), 0,
-								0, 0, 0, 1);
-
-		Matrix4d<K> rot_mat_y(	cos(y_rot), 0, sin(y_rot), 0,
-								0, 1, 0, 0,
-								-sin(y_rot), 0, cos(y_rot), 0,
-								0, 0, 0, 1);
-
-		Matrix4d<K> rot_mat_z(	cos(z_rot), -sin(z_rot), 0, 0,
-								sin(z_rot), cos(z_rot), 0, 0,
-								0, 0, 1, 0,
-								0, 0, 0, 1);
-
-		Matrix4d<K> translation_mat(1, 0, 0, 0,
-									0, 1, 0, 0,
-									0, 0, 1, 0,
-									translation[0], translation[1], translation[2], 1);
-
-		Matrix4d<K> rot_mat = rot_mat_z * rot_mat_y * rot_mat_x;
-		Matrix4d<K> res = scale_mat * rot_mat * translation_mat;
-		
-		return res;*/
-
-		glm::mat4 poz = glm::translate(glm::vec3(translation[0], translation[1], translation[2]));
-		glm::mat4 rot_x = glm::rotate(x_rot, glm::vec3(1, 0, 0));
-		glm::mat4 rot_y = glm::rotate(y_rot, glm::vec3(0, 1, 0));
-		glm::mat4 rot_z = glm::rotate(z_rot, glm::vec3(0, 0, 1));
-		glm::mat4 mscale = glm::scale(glm::vec3(scale, scale, scale));
-
-		glm::mat4 rot = rot_z * rot_y * rot_x;
-		return poz * rot * mscale;
+		//glm::mat4 rot = rot_z * rot_y * rot_x;
+		//return poz * rot * mscale;
+		return transform;
 	}
 
 	//===== Templated function which calculates the fov/aspect/znear/zfar matrix =====//
 	template <class K>
 	static glm::mat4 get_perspective_matrix(K fov, K aspect_ratio, K z_near, K z_far)
 	{
+		fov = (float)DEG_TO_RAD * fov;
 		return glm::perspective(fov, aspect_ratio, z_near, z_far);
-
-		/*
-		Matrix4d<K> res;
-		return res;*/
 	}
 
 	//===== Templated function which calculates =====//
 	template <class K>
-	static glm::mat4 get_view_matrix(glm::mat4 const & perspective, Matrix4d<K> view)
+	static glm::mat4 get_view_matrix(Matrix4d<K> view)
 	{
 		glm::vec3 poz = glm::vec3(view.mat[0][0], view.mat[0][1], view.mat[0][2]);
 		glm::vec3 forward = glm::vec3(view.mat[1][0], view.mat[1][1], view.mat[1][2]);
 		glm::vec3 up = glm::vec3(view.mat[2][0], view.mat[2][1], view.mat[2][2]);
-
-		return perspective * glm::lookAt(poz, poz + forward, up);
-
-		/*
-		Matrix4d<K> res;
-		return res;*/
-	}
-
-	//===== Templated function which calculates =====//
-	//template <class K>
-	static glm::mat4 get_calc_matrix(glm::mat4 const & transform, glm::mat4 const & view)
-	{
-		return view * transform;
-		/*
-		Matrix4d<K> res = view * transform;
-		return res;*/
+		glm::mat4 view_mat(1.0f);
+		view_mat = glm::lookAt(poz, poz + forward, up);
+		return view_mat;
 	}
 }
