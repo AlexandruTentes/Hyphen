@@ -3,6 +3,7 @@
 #define WINDOW_H_
 
 #include "../CompiledHeaders.h"
+#include "../Event/KeyCodes.h"
 #include "../Event/KeyEvent.h"
 #include "../Event/MouseEvent.h"
 #include "../Event/WindowEvent.h"

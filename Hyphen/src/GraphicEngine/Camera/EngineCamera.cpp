@@ -2,13 +2,6 @@
 
 namespace Hyphen
 {
-	EngineCamera::EngineCamera(Matrix4d<float>& view)
-	{
-		this->view = view;
-
-		camera.set_camera_data(this->view);
-	}
-
 	void EngineCamera::attach()
 	{
 		camera.calculate_lookpoint();
@@ -22,7 +15,6 @@ namespace Hyphen
 	void EngineCamera::update()
 	{
 		handled = false;
-		camera.set_lookat_point(view);
 
 		if (center_cursor_status && right_click_no == 1)
 		{
@@ -62,6 +54,12 @@ namespace Hyphen
 			prev_x = e.get_x();
 			prev_y = e.get_y();
 		}
+	}
+
+	void EngineCamera::set_view(ViewPort& viewport)
+	{
+		camera.set_camera_data(viewport);
+		this->viewport = &viewport;
 	}
 
 	void EngineCamera::on_key_press(KeyDown& e)

@@ -9,20 +9,10 @@
 #include "../GraphicEngine/Camera/EngineCamera.h"
 #include "../Layer/LayerStack.h"
 #include "../GraphicEngine/Scene.h"
+#include "ImGuiInclude.h"
 #include "ModelsGUI.h"
 
 #define GUI_H_
-
-#ifdef WINDOWS //For now the GUI works only for windows machines
-	#include "../../thirdparty/imgui/imgui_impl_win32.h"
-	#define HANDLER HWND 
-#elif defined(LINUX)
-	#include "../../thirdparty/imgui/" // to be implemented later
-#endif
-
-#ifdef OPENGL //For now the GUI works only with opengl
-	#include "../../thirdparty/imgui/imgui_impl_opengl3.h"
-#endif
 
 namespace Hyphen
 {
@@ -54,9 +44,13 @@ namespace Hyphen
 			Collection<ModelTransfData, std::string>::get_instance();
 	private:
 		float prev_time = 0.0f;
+		std::string bound_camera = "";
+		bool skip_scene_camera_bind_once = true;
+		bool skip_engine_camera_bind_once = true;
+		std::map<std::string, ViewPort> cameras;
 		
 		Renderer* renderer = nullptr;
-		EngineCamera* camera;
+		EngineCamera* camera = nullptr;
 
 		//Other GUI components
 		ModelsGUI models_gui;
@@ -76,8 +70,14 @@ namespace Hyphen
 		friend class ModelsGUI;
 	private:
 		//Main GUI data
+		enum
+		{
+			MODELS,
+			SHADERS,
+			SCENES
+		};
 		static const int features_size = 3;
-		std::string features[features_size] = {"Models", "Shaders", "Scenes"};
+		//std::string features[features_size] = {"Models", "Shaders", "Scenes"};
 		unsigned int selected_feature = 0;
 	};
 }

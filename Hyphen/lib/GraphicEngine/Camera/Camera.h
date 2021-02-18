@@ -8,6 +8,12 @@
 // A namespace for the camera
 namespace Hyphen
 {
+	struct ViewPort
+	{
+		Matrix4d<float> view;
+		float lat = PI, lon = 0;
+	};
+
 	// The Camera class
 	class Camera
 	{
@@ -18,10 +24,7 @@ namespace Hyphen
 		//	Camera specific data  //
 		//========================//
 
-		float lat = 0, lon = 0;													// View angles (degrees)   
-		float eyex = 0, eyey = 0, eyez;											// Eye point                
-		float centerx = 0, centery = 0, centerz = 0;									// Look point               
-		float upx = 0, upy = 0, upz = 0;												// View up vector 			
+		ViewPort * viewport;
 
 		float sensitivity = 30 * 0.01;											// Camera movement sensitivity
 		float angle = 90.0;												// Angle of the camera FOV
@@ -33,14 +36,6 @@ namespace Hyphen
 
 	// Public functions
 	public:
-		Camera() {};
-
-		// The camera constructor which sets all the initial 'Camera specific data'
-		Camera(	float const & lat, float const & lon,
-				float const & eyex, float const & eyey, float const & eyez,
-				float const & upx, float const & upy, float const & upz);
-
-
 		//==========================//
 		//	Camera logic functions  //
 		//==========================//
@@ -56,10 +51,7 @@ namespace Hyphen
 		//====================//
 
 		// Sets the camera initial data
-		void set_camera_data(Matrix4d<float>& view);
-
-		// Sets camera in the scene
-		void set_lookat_point(Matrix4d<float> & view);
+		void set_camera_data(ViewPort & viewport);
 
 		// Sets the camera rotation sensitivity
 		void set_sensitivity(int sensitivity);

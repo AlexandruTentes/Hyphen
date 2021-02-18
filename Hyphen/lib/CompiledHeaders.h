@@ -16,6 +16,7 @@
 
 #include "GlobalVariables.h"
 #include "Math/UtilityMacros.h"
+#include "Event/KeyCodes.h"
 
 //////////////////////////////////
 //===== Platform libraries =====//

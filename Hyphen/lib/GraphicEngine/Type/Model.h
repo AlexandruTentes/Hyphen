@@ -23,13 +23,22 @@ namespace Hyphen
 		float scale = 1.0f;
 		float rotation[3] = { 0.0f, 0.0f, 0.0f };
 		float translation[3] = { 0.0f, 0.0f, 0.0f };
-		float color[3] = { 128.0f, 128.0f, 128.0f };
+		float color[3] = { 128.0f, 255.0f, 128.0f };
 		float opacity = 1.0f;
-		float animation_speed = 1.0f;
-		int rotation_angle = 50;
 		int selected_shader_index = 0;
 		Shader shader;
 		unsigned int collection_index = 0;
+	};
+
+	struct ModelPreviewData
+	{
+		float animation_speed = 1.0f;
+		int rotation_angle = 50;
+		bool animation = false;
+
+		//aux data
+		float speed = 0.0f;
+		float relative_speed = 0.0f;
 	};
 
 	class API Model
@@ -42,11 +51,16 @@ namespace Hyphen
 			std::string const& model_name, std::string const& model_root);
 		void set(Model& model);
 		void animate();
+		void GUI_preview();
 		void bind_data(std::string& key);
+		bool is_data_bound(std::string& key);
 		void GUI();
 		void GUI_begin();
 		void GUI_end();
 		virtual ~Model();
+	public:
+		Collection<ModelTransfData, std::string>& model_transf_data =
+			Collection<ModelTransfData, std::string>::get_instance();
 	public:
 		Vertex vertex;
 		Normal normal;
@@ -56,15 +70,11 @@ namespace Hyphen
 		std::string model_name;
 		std::string model_root;
 		DynamicObject<char*> shaders;
+		ModelPreviewData preview_data;
 		ModelTransfData * data;
 		unsigned int model_scene_no = 0;
 		unsigned int collection_index = 0;
 		unsigned int vao_index = 0;
-		bool animation = false;
-		float speed = 0.0f;
-		float relative_speed = 0.0f;
 		bool is_preview = false;
-		Collection<ModelTransfData, std::string>& model_transf_data = 
-			Collection<ModelTransfData, std::string>::get_instance();
 	};
 }

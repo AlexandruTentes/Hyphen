@@ -31,22 +31,45 @@ namespace Hyphen
 
 	void Model::animate()
 	{
-		relative_speed = data->animation_speed / 10000;
+		preview_data.relative_speed = preview_data.animation_speed * 0.0001;
 
-		float sinc = sinf(speed);
-		float cosc = cosf(speed);
+		float sinc = sinf(preview_data.speed);
+		float cosc = cosf(preview_data.speed);
 		data->translation[0] = sinc;
 		data->translation[2] = cosc;
-		data->rotation[0] = speed * data->rotation_angle;
-		data->rotation[1] = speed * data->rotation_angle;
-		data->rotation[2] = speed * data->rotation_angle;
+		data->rotation[0] = preview_data.speed * preview_data.rotation_angle;
+		data->rotation[1] = preview_data.speed * preview_data.rotation_angle;
+		data->rotation[2] = preview_data.speed * preview_data.rotation_angle;
 
-		speed += relative_speed;
+		preview_data.speed += preview_data.relative_speed;
+	}
+
+	void Model::GUI_preview()
+	{
+		ImGui::SliderFloat("Animation Speed", &preview_data.animation_speed, 0, 10);
+		ImGui::SliderInt("Rotation Angle", &preview_data.rotation_angle, 0, 360);
+		bool btn = ImGui::Button("Animation: ");
+
+		if (btn && !preview_data.animation)
+			preview_data.animation = true;
+		else if (btn && preview_data.animation)
+			preview_data.animation = false;
+
+		ImGui::SameLine();
+		ImGui::Text(preview_data.animation ? " ON" : " OFF");
+
+		if (preview_data.animation)
+			animate();
 	}
 
 	void Model::bind_data(std::string& key)
 	{
 		data = model_transf_data.get(key);
+	}
+
+	bool Model::is_data_bound(std::string& key)
+	{
+		return model_transf_data.get(key) == data;
 	}
 
 	void Model::GUI_begin()
@@ -63,33 +86,17 @@ namespace Hyphen
 	void Model::GUI()
 	{
 		//Begin the GUI implementation
-		ImVec2 img_size = ImVec2(350, 200);
-		ImGui::Image((ImTextureID)fbo.get_tex(), img_size, ImVec2(0, 1), ImVec2(1, 0));
 		ImGui::SliderFloat("Scale", &data->scale, 0, 1);
 		ImGui::SliderFloat3("Position", data->translation, -9.0, 9.0);
 		ImGui::SliderFloat3("Rotation", data->rotation, 0, 359);
 		ImGui::SliderFloat3("Color", data->color, 0, 255);
 		ImGui::SliderFloat("Opacity", &data->opacity, 0, 1);
-		ImGui::SliderFloat("Animation Speed", &data->animation_speed, 0, 10);
-		ImGui::SliderInt("Rotation Angle", &data->rotation_angle, 0, 360);
 		if (ImGui::Combo("Shaders List", &data->selected_shader_index, shaders.get_all(), shaders.get_size()))
 		{
 			data->shader.name = shaders.get_all()[data->selected_shader_index];
 			data->shader.load_shader(data->shader.name);
 			data->shader.link_shaders();
 		}
-		bool btn = ImGui::Button("Animation: ");
-
-		if (btn && !animation)
-			animation = true;
-		else if (btn && animation)
-			animation = false;
-
-		ImGui::SameLine();
-		ImGui::Text(animation ? " ON" : " OFF");
-
-		if (animation)
-			animate();
 	}
 
 	void Model::GUI_end()

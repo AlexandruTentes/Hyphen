@@ -2,30 +2,9 @@
 
 namespace Hyphen
 {
-	Camera::Camera(float const& lat, float const& lon,
-		float const& eyex, float const& eyey, float const& eyez,
-		float const& upx, float const& upy, float const& upz) :
-		lat(lat), lon(lon),
-		eyex(eyex), eyey(eyey), eyez(eyez),
-		upx(upx), upy(upy), upz(upz)
+	void Camera::set_camera_data(ViewPort & viewport)
 	{
-		// First camera setup, calculate the look at point
-		calculate_lookpoint();
-	}
-
-	void Camera::set_camera_data(Matrix4d<float>& view)
-	{
-		lat = PI;
-		lon = 0;
-		eyex = view.mat[0][0];
-		eyey = view.mat[0][1];
-		eyez = view.mat[0][2];
-		centerx = view.mat[1][0];
-		centery = view.mat[1][1];
-		centerz = view.mat[1][2];
-		upx = view.mat[2][0];
-		upy = view.mat[2][1];
-		upz = view.mat[2][2];
+		this->viewport = &viewport;
 	}
 
 	void Camera::camera_motion(int const& x, int const& y)
@@ -44,39 +23,39 @@ namespace Hyphen
 			// If there was movement in x, rotate camera accordingly
 			if (delta_x != 0)
 			{
-				lon -= lon_calc;
+				viewport->lon -= lon_calc;
 			}
 
 			// If there was movement in y, rotate camera accordingly
 			if (delta_y != 0)
 			{
 				// Set bounds for y coordonates (latitude)
-				if (lat - lat_calc > -angle + lat_down_angle_difference &&
-					lat - lat_calc < angle - lat_up_angle_difference)
-					lat -= lat_calc;
+				if (viewport->lat - lat_calc > -angle + lat_down_angle_difference &&
+					viewport->lat - lat_calc < angle - lat_up_angle_difference)
+					viewport->lat -= lat_calc;
 
 				// If lat gets past -90, set the lat to the minumum degrees allowed
-				if (lat - lat_calc < -angle + lat_down_angle_difference)
-					lat = -angle + lat_down_angle_difference;
+				if (viewport->lat - lat_calc < -angle + lat_down_angle_difference)
+					viewport->lat = -angle + lat_down_angle_difference;
 
 				// If lat gets past 90, set the lat to the maximum degrees allowed
-				if (lat - lat_calc > angle - lat_up_angle_difference)
-					lat = angle - lat_up_angle_difference;
+				if (viewport->lat - lat_calc > angle - lat_up_angle_difference)
+					viewport->lat = angle - lat_up_angle_difference;
 			}
 		}
 	}
 
 	void Camera::calculate_lookpoint()
 	{
-		centerx = (GLfloat)(cos(lat * DEG_TO_RAD) * sin(lon * DEG_TO_RAD));
-		centery = (GLfloat)(sin(lat * DEG_TO_RAD));
-		centerz = (GLfloat)(cos(lat * DEG_TO_RAD) * cos(lon * DEG_TO_RAD));
-		glm::vec3 direction(centerx, centery, centerz);
-		glm::vec3 right(sin(lon * DEG_TO_RAD - HALF_PI), 0, cos(lon * DEG_TO_RAD - HALF_PI));
+		viewport->view.mat[1][0] = (GLfloat)(cos(viewport->lat * DEG_TO_RAD) * sin(viewport->lon * DEG_TO_RAD));
+		viewport->view.mat[1][1] = (GLfloat)(sin(viewport->lat * DEG_TO_RAD));
+		viewport->view.mat[1][2] = (GLfloat)(cos(viewport->lat * DEG_TO_RAD) * cos(viewport->lon * DEG_TO_RAD));
+		glm::vec3 direction(viewport->view.mat[1][0], viewport->view.mat[1][1], viewport->view.mat[1][2]);
+		glm::vec3 right(sin(viewport->lon * DEG_TO_RAD - HALF_PI), 0, cos(viewport->lon * DEG_TO_RAD - HALF_PI));
 		glm::vec3 up = glm::cross(right, direction);
-		upx = up.x;
-		upy = up.y;
-		upz = up.z;
+		viewport->view.mat[2][0] = up.x;
+		viewport->view.mat[2][1] = up.y;
+		viewport->view.mat[2][2] = up.z;
 	}
 
 	void Camera::set_sensitivity(int sensitivity)
@@ -86,17 +65,17 @@ namespace Hyphen
 
 	void Camera::set_eyex(float x)
 	{
-		eyex = x;
+		viewport->view.mat[0][0] = x;
 	}
 
 	void Camera::set_eyey(float y)
 	{
-		eyey = y;
+		viewport->view.mat[0][1] = y;
 	}
 
 	void Camera::set_eyez(float z)
 	{
-		eyez = z;
+		viewport->view.mat[0][2] = z;
 	}
 
 	void Camera::set_rotation_angle(float angle)
@@ -116,46 +95,26 @@ namespace Hyphen
 
 	float Camera::get_lat()
 	{
-		return lat;
+		return viewport->lat;
 	}
 
 	float Camera::get_lon()
 	{
-		return lon;
+		return viewport->lon;
 	}
 
 	float Camera::get_eyex()
 	{
-		return eyex;
+		return viewport->view.mat[0][0];
 	}
 
 	float Camera::get_eyey()
 	{
-		return eyey;
+		return viewport->view.mat[0][1];
 	}
 
 	float Camera::get_eyez()
 	{
-		return eyez;
+		return viewport->view.mat[0][2];
 	}
-
-	void Camera::set_lookat_point(Matrix4d<float> & view)
-	{
-		unsigned raw_1 = 0;
-		unsigned raw_2 = 1;
-		unsigned raw_3 = 2;
-
-		view.mat[raw_1][0] = eyex;
-		view.mat[raw_1][1] = eyey;
-		view.mat[raw_1][2] = eyez;
-
-		view.mat[raw_2][0] = centerx;
-		view.mat[raw_2][1] = centery;
-		view.mat[raw_2][2] = centerz;
-
-		view.mat[raw_3][0] = upx;
-		view.mat[raw_3][1] = upy;
-		view.mat[raw_3][2] = upz;
-	}
-
 }

@@ -13,6 +13,7 @@ namespace Hyphen
 #endif
 #ifdef OPENGL
 		ImGui_ImplOpenGL3_Init("#version 410");
+
 #elif defined(DIRECTX)
 		//DirectX init
 #endif
@@ -23,11 +24,18 @@ namespace Hyphen
 		camera = new EngineCamera();
 
 		Scene * scene = new Scene(std::string("Scene0"));
-		scene->cameras["Camera0"] = camera->view;
-		scene->bound_camera = "Camera0";
+
+		ViewPort viewport;
+		viewport.view = Matrix4d<float>(0, 1.2, -10, 0,
+										0, 0, 1, 0,
+										0, -1, 0, 0,
+										0, 0, 0, 0);
+
+		scene->cameras["MainCamera"] = viewport;
+		scene->bound_camera = "MainCamera";
 		scenes.add(scene, scene->name);
 		renderer->bound_scene = 0;
-
+		camera->set_view(scene->cameras["MainCamera"]);
 		layer_stack.push_overlay(camera);
 	}
 
@@ -59,23 +67,39 @@ namespace Hyphen
 #endif
 		ImGui::NewFrame();
 
+		Scene* scene = scenes.get(renderer->bound_scene);
+		bool is_engine_focus = io.WantCaptureMouse;
+		if(!camera->is_cursor_visible)
+			if (!is_engine_focus)
+				camera->set_view(scene->cameras[scene->bound_camera]);
+			else
+				camera->set_view(cameras[bound_camera]);
+
+		//Draw Scene GUI
+		scenes.get(renderer->bound_scene)->GUI();
+
 		//Begin the GUI implementation
 		ImGui::SetNextWindowSize(ImVec2(0, height * 0.5));
 		ImGui::Begin(window_title, NULL, 
 			ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
-		renderer->draw_scene();
 
+		renderer->view = scene->cameras[scene->bound_camera].view;
+		renderer->draw_scene();
+		/*
 		for (unsigned int i = 0; i < features_size; i++)
 		{
+			ImGui::SameLine();
+			if (ImGui::Button(features[i].c_str(), ImVec2(aspect_ratio * 50.0, aspect_ratio * 15.0));)
+			{
+				if(i == MODELS)
+					models_gui.show(this);
+			}
+		}*/
 
-		}
-
-		// GUI for models list
+		renderer->view = cameras[bound_camera].view;
 		models_gui.show(this);
 
 		ImGui::End();
-		//End GUI
-
 		ImGui::Render();
 #ifdef OPENGL
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

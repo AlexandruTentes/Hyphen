@@ -125,19 +125,12 @@ namespace Hyphen
 		if (shader_cache.cache[shader])
 		{
 			shader_handler = shader_cache.cache[shader];
-			std::cout << shader_handler << " 2nd \n";
 			to_link = false;
 			return;
 		}
 
 		shader_handler = glCreateProgram();
 		to_link = true;
-
-		if (shader == "Default")
-		{
-			load_shader_default();
-			return;
-		}
 
 		std::cout << "Compile shader " << shader << "\n";
 
@@ -151,29 +144,6 @@ namespace Hyphen
 				GL_VERTEX_SHADER : GL_FRAGMENT_SHADER));
 
 		shader_cache.cache[shader] = shader_handler;
-	}
-
-	void Shader::load_shader_default()
-	{
-		std::cout << "Compile shader " << "Default" << "\n";
-
-		DynamicObject<FileAndPath> files;
-		get_files_directory(files, (std::string)shader_path + "\\Default",
-			extension, sizeof(extension) / sizeof(extension[0]), "Default");
-
-		if (files.get_size() == 0)
-		{
-			std::cerr << "WARNING: Could not find object shaders!" << std::endl;
-			return;
-		}
-
-		for (int i = 0; i < files.get_size(); i++)
-			push(compile_shader(read(
-				files.get_one(i).path + "\\" + files.get_one(i).file),
-				grep(files.get_one(i).file, ".vs") ?
-				GL_VERTEX_SHADER : GL_FRAGMENT_SHADER));
-
-		shader_cache.cache["Default"] = shader_handler;
 	}
 
 	void Shader::bind()

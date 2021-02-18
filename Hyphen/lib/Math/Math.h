@@ -126,6 +126,10 @@ namespace Hyphen
 			mat[0][0] = vec_x.vec[0]; mat[0][1] = vec_x.vec[1];
 			mat[1][0] = vec_y.vec[0]; mat[1][1] = vec_y.vec[1];
 		};
+		Vector2d<T> get_vector(unsigned short int index)
+		{
+			return Vector2d<T>(mat[index][0], mat[index][1]);
+		}
 		void init(T const & def)
 		{
 			DEFAULTING(2);
@@ -170,6 +174,10 @@ namespace Hyphen
 			mat[0][0] = vec_x.vec[0]; mat[0][1] = vec_x.vec[1]; mat[0][2] = vec_x.vec[2];
 			mat[1][0] = vec_y.vec[0]; mat[1][1] = vec_y.vec[1]; mat[1][2] = vec_y.vec[2];
 			mat[2][0] = vec_z.vec[0]; mat[2][1] = vec_z.vec[1]; mat[2][2] = vec_z.vec[2];
+		}
+		Vector3d<T> get_vector(unsigned short int index)
+		{
+			return Vector3d<T>(mat[index][0], mat[index][1], mat[index][2]);
 		}
 		void init(T const & def)
 		{
@@ -220,6 +228,10 @@ namespace Hyphen
 			mat[1][0] = vec_y.vec[0]; mat[1][1] = vec_y.vec[1]; mat[1][2] = vec_y.vec[2]; mat[1][3] = vec_y.vec[3];
 			mat[2][0] = vec_z.vec[0]; mat[2][1] = vec_z.vec[1]; mat[2][2] = vec_z.vec[2]; mat[2][3] = vec_z.vec[3];
 			mat[3][0] = vec_t.vec[0]; mat[3][1] = vec_t.vec[1]; mat[3][2] = vec_t.vec[2]; mat[3][3] = vec_t.vec[3];
+		}
+		Vector4d<T> get_vector(unsigned short int index)
+		{
+			return Vector4d<T>(mat[index][0], mat[index][1], mat[index][2], mat[index][3]);
 		}
 		void init(T const & def)
 		{

@@ -4,6 +4,7 @@
 
 #include "../CompiledHeaders.h"
 #include "../GraphicEngine/Type/Model.h"
+#include "GUIComponents.h"
 
 namespace Hyphen
 {
@@ -13,6 +14,8 @@ namespace Hyphen
 		template <class T>
 		void show(T * gui);
 		virtual ~ModelsGUI() = default;
+	private:
+		SearchBar model_searchbar;
 	};
 
 	template<class T>
@@ -23,6 +26,7 @@ namespace Hyphen
 		bool is_item_hover;
 		bool is_hover;
 		unsigned int model_index;
+		bool is_filter_text = model_searchbar.new_searchbar();
 		for (unsigned int i = 0; i < gui->folder.files.get_size(); i++)
 		{
 			is_hover = ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem | ImGuiHoveredFlags_AllowWhenDisabled |
@@ -33,10 +37,9 @@ namespace Hyphen
 			ImGui::BeginGroup();
 			ImGui::Image((ImTextureID)i, ImVec2(aspect_ratio * 30.0, aspect_ratio * 30.0));
 			ImGui::SameLine();
-			open_popup = ImGui::Button(gui->folder.files.get_one(i).file.c_str(), ImVec2(aspect_ratio * 50.0, aspect_ratio * 15.0));
+			open_popup = ImGui::Button(gui->folder.files.get_one(i).file_root.c_str(), ImVec2(aspect_ratio * 50.0, aspect_ratio * 15.0));
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5.0);
 			model_index = gui->models.get_index(gui->folder.files.get_one(i).file);
-			gui->renderer->view = gui->camera->view;
 
 			if (is_item_hover && gui->drag && !gui->start_drag)
 			{
@@ -74,7 +77,7 @@ namespace Hyphen
 				model_index = gui->models.get_index(gui->folder.files.get_one(gui->drag_model_index).file) - 1;
 				m = gui->models.get(model_index);
 				std::string model_scene_name =
-					m->model_name + std::to_string(m->model_scene_no);
+					m->model_root + std::to_string(m->model_scene_no);
 
 				if (!gui->scenes.get(gui->renderer->bound_scene)->models[model_scene_name])
 				{
@@ -101,9 +104,19 @@ namespace Hyphen
 				m->GUI_begin();
 				m->bind_data(m->model_name);
 				gui->renderer->render_model(m);
-				ImGui::OpenPopup((gui->folder.files.get_one(i).file + " Transformation Matrix").c_str());
+				if (gui->cameras.count(m->model_name) == 0)
+				{
+					ViewPort viewport;
+					viewport.view = Matrix4d<float>(0, 1.2, -10, 0,
+													0, 0, 1, 0,
+													0, -1, 0, 0,
+													0, 0, 0, 0);
+					gui->cameras[m->model_name] = viewport;
+					gui->bound_camera = m->model_name;
+				}
+				ImGui::OpenPopup((gui->folder.files.get_one(i).file + " Preview Properties").c_str());
 			}
-			if (ImGui::BeginPopup((gui->folder.files.get_one(i).file + " Transformation Matrix").c_str()))
+			if (ImGui::BeginPopup((gui->folder.files.get_one(i).file + " Preview Properties").c_str()))
 			{
 				ImGui::Text(gui->folder.files.get_one(i).file.c_str());
 				m = gui->models.get(model_index - 1);
@@ -112,11 +125,15 @@ namespace Hyphen
 				m->bind_data(m->model_name);
 				gui->renderer->draw_model(m);
 				m->fbo.unbind();
+				ImVec2 img_size = ImVec2(350, 200);
+				ImGui::Image((ImTextureID)m->fbo.get_tex(), img_size, ImVec2(0, 1), ImVec2(1, 0));
 				m->GUI();
+				m->GUI_preview();
 				gui->is_preview = true;
 				ImGui::EndPopup();
 			}
-			else if (gui->models.get_size() && model_index && gui->models.get(model_index - 1)->is_preview)
+			else if (gui->models.get_size() && model_index && 
+				gui->models.get(model_index - 1)->is_preview && gui->is_preview)
 			{
 				gui->is_preview = false;
 				gui->models.get(model_index - 1)->GUI_end();

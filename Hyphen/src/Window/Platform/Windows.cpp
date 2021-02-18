@@ -281,6 +281,7 @@ namespace Hyphen
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
 	using namespace Hyphen;
+	KeyCodes& codes = KeyCodes::get_instance();
 
 #define POLL(T, e)	EventPoll::get_instance().event_poll[e.type] = true; \
 					delete EventPoll::get_instance().event_array[T::type]; \
@@ -320,6 +321,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	{
 		KeyDown key_down(LOWORD(wparam));
 		window_manager_instance.get_one_window(hwnd)->on_event<KeyDown>(key_down);
+		codes.key_map[key_down.get_key()] = true;
 		POLL(KeyDown, key_down)
 		return 0;
 	}
@@ -327,6 +329,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	{
 		KeyUp key_up(LOWORD(wparam));
 		window_manager_instance.get_one_window(hwnd)->on_event<KeyUp>(key_up);
+		codes.key_map[key_up.get_key()] = false;
 		POLL(KeyUp, key_up)
 		return 0;
 	}
