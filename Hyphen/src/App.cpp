@@ -1,23 +1,22 @@
 #include "../lib/App.h"
 
-#include "../lib/GraphicEngine/Shader.h"
-#include "../lib/GraphicEngine/Buffer/VertexBufferLayout.h"
-#include "../lib/GraphicEngine/Collection/FolderData.h"
-
 namespace Hyphen
 {
 	void App::run()
 	{
+		get_files_directory(folder.get(model_path), std::string(model_path), model_extension,
+			sizeof(model_extension) / sizeof(model_extension[0]));
+		get_files_directory(folder.get(shader_path), std::string(shader_path), shader_extension,
+			sizeof(shader_extension) / sizeof(shader_extension[0]));
+		get_files_directory(folder.get(miscs_path), std::string(miscs_path), model_extension,
+			sizeof(model_extension) / sizeof(model_extension[0]));
+
 		KeyDown kd;
 		MouseMove mv;
 		HyphenWindow * app_window = HyphenWindow::create();
 
 		if (!app_window->init())
 			std::cerr << "Error at window initialization!\n";
-
-		DynamicObject<FileAndPath> files;
-		get_files_directory(files, std::string(model_path), model_extension, sizeof(model_extension) / sizeof(model_extension[0]));
-		FolderData::get_instance().files = files;
 				
 		//===== =====//
 		while (app_window->window->is_running)

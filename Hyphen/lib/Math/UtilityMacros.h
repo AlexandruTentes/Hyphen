@@ -18,5 +18,4 @@
 
 #define PI										3.141592653f
 #define HALF_PI									1.570796326f
-#define TO_RAD(angle)							angle = angle * (PI / 180)
 #define DEG_TO_RAD								0.017453293f

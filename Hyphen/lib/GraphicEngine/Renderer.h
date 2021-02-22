@@ -24,7 +24,8 @@ namespace Hyphen
 		virtual ~Renderer() = default;
 	public:
 		Matrix4d<float> view;
-		unsigned int bound_scene = 0;
+		std::string bound_scene;
+		unsigned int scenes_no = 0;
 		Collection<Scene, std::string>& scenes = Collection<Scene, std::string>::get_instance();
 	private:
 		VertexBufferLayout layout;

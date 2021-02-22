@@ -8,8 +8,6 @@ namespace Hyphen
 	Model::Model(Vertex& vertex, Normal& normal, Texture& texture, Index& index,
 		std::string const& model_name, std::string const& model_root)
 	{
-		data = new ModelTransfData();
-		model_transf_data.add(data, (std::string)model_name);
 		set(vertex, normal, texture, index, model_name, model_root);
 	}
 

@@ -14,12 +14,15 @@ namespace Hyphen
 		template <class T>
 		void show(T * gui);
 		virtual ~ModelsGUI() = default;
+	public:
+		Collection<Scene, std::string>& scenes = Collection<Scene, std::string>::get_instance();
+		Filesystem& folder = Filesystem::get_instance();
 	private:
 		SearchBar model_searchbar;
 	};
 
 	template<class T>
-	inline void ModelsGUI::show(T* gui)
+	void ModelsGUI::show(T* gui)
 	{
 		Model* m;
 		bool open_popup = false;
@@ -27,98 +30,49 @@ namespace Hyphen
 		bool is_hover;
 		unsigned int model_index;
 		bool is_filter_text = model_searchbar.new_searchbar();
-		for (unsigned int i = 0; i < gui->folder.files.get_size(); i++)
+
+		for (unsigned int i = 0; i < folder.get(model_path).get_size(); i++)
 		{
-			is_hover = ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem | ImGuiHoveredFlags_AllowWhenDisabled |
-				ImGuiHoveredFlags_ChildWindows | ImGuiHoveredFlags_AllowWhenBlockedByPopup);
-			is_item_hover = ImGui::IsItemHovered();
 			//ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 1.0f);
 			//ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 1.0f, 1.0f, 0.8f));
 			ImGui::BeginGroup();
 			ImGui::Image((ImTextureID)i, ImVec2(aspect_ratio * 30.0, aspect_ratio * 30.0));
 			ImGui::SameLine();
-			open_popup = ImGui::Button(gui->folder.files.get_one(i).file_root.c_str(), ImVec2(aspect_ratio * 50.0, aspect_ratio * 15.0));
+			open_popup = ImGui::Button(folder.get(model_path).get(i)->file_root.c_str(), ImVec2(aspect_ratio * 50.0, aspect_ratio * 15.0));
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5.0);
-			model_index = gui->models.get_index(gui->folder.files.get_one(i).file);
-
-			if (is_item_hover && gui->drag && !gui->start_drag)
-			{
-				gui->drag_model_index = i - 1;
-				gui->start_drag = true;
-			}
-
-			if (gui->start_drag && gui->drag && is_hover && i == gui->drag_model_index && !gui->is_preview)
-			{
-				gui->model_dragndrop = true;
-				read_raw_model(gui->folder.files.get_one(gui->drag_model_index));
-				ImGui::OpenPopup("");
-				ImGui::SetNextWindowPos(ImVec2(ImGui::GetMousePos().x - aspect_ratio * 30.0 * 0.5,
-					ImGui::GetMousePos().y - aspect_ratio * 30.0 * 0.5));
-				ImGui::BeginPopup("", ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoInputs);
-				ImGui::Image((ImTextureID)i, ImVec2(aspect_ratio * 30.0, aspect_ratio * 30.0));
-				ImGui::EndPopup();
-			}
-
-			if (gui->dragndrop && gui->model_dragndrop)
-			{
-				if (!is_hover)
-				{
-					model_index = gui->models.get_index(gui->folder.files.get_one(gui->drag_model_index).file) - 1;
-					m = gui->models.get(model_index);
-					m->model_scene_no++;
-				}
-				gui->start_drag = false;
-				gui->dragndrop = false;
-				gui->model_dragndrop = false;
-			}
-
-			if (gui->start_drag && gui->drag && !is_hover)
-			{
-				model_index = gui->models.get_index(gui->folder.files.get_one(gui->drag_model_index).file) - 1;
-				m = gui->models.get(model_index);
-				std::string model_scene_name =
-					m->model_root + std::to_string(m->model_scene_no);
-
-				if (!gui->scenes.get(gui->renderer->bound_scene)->models[model_scene_name])
-				{
-					ModelTransfData* data = new ModelTransfData();
-					data->translation[0] = (float)ImGui::GetMousePos().x / width;
-					data->translation[2] = (float)ImGui::GetMousePos().y / height;
-					gui->model_transf_data.add(data, model_scene_name);
-					m->bind_data(model_scene_name);
-					gui->renderer->render_model(m);
-					gui->scenes.get(gui->renderer->bound_scene)->models[model_scene_name] = m;
-				}
-				else
-				{
-					gui->model_transf_data.get(model_scene_name)->translation[0] = -(float)ImGui::GetMousePos().x / width * 10;
-					//model_transf_data.get(model_scene_name)->translation[2] = -(float) 1 / ImGui::GetMousePos().y;
-				}
-			}
-
+			model_index = gui->models.get_index(folder.get(model_path).get(i)->file);
+			gui->drag_model_to_scene(i, folder.get(model_path).get(i)->file, folder.get(model_path));
+			
+			// Model Preview implementation
 			if (open_popup)
 			{
-				read_raw_model(gui->folder.files.get_one(i));
-				model_index = gui->models.get_index(gui->folder.files.get_one(i).file);
+				// Ready the pop-up begin data
+				read_raw_model(*folder.get(model_path).get(i));
+				model_index = gui->models.get_index(folder.get(model_path).get(i)->file);
 				m = gui->models.get(model_index - 1);
 				m->GUI_begin();
 				m->bind_data(m->model_name);
 				gui->renderer->render_model(m);
+
+				// If the model doesn t have a viewport, create a new one
 				if (gui->cameras.count(m->model_name) == 0)
 				{
 					ViewPort viewport;
-					viewport.view = Matrix4d<float>(0, 1.2, -10, 0,
-													0, 0, 1, 0,
-													0, -1, 0, 0,
-													0, 0, 0, 0);
+					viewport.view.set(	0, 1.2, -10, 0,
+										0, 0, 1, 0,
+										0, 1, 0, 0,
+										0, 0, 0, 0);
 					gui->cameras[m->model_name] = viewport;
 					gui->bound_camera = m->model_name;
 				}
-				ImGui::OpenPopup((gui->folder.files.get_one(i).file + " Preview Properties").c_str());
+				else gui->bound_camera = m->model_name;
+				ImGui::OpenPopup((folder.get(model_path).get(i)->file + " Preview Properties").c_str());
 			}
-			if (ImGui::BeginPopup((gui->folder.files.get_one(i).file + " Preview Properties").c_str()))
+
+			//Start the popup, binding the fbo, transformation matrix else ready the pop-up end
+			if (ImGui::BeginPopup((folder.get(model_path).get(i)->file + " Preview Properties").c_str()))
 			{
-				ImGui::Text(gui->folder.files.get_one(i).file.c_str());
+				ImGui::Text(folder.get(model_path).get(i)->file.c_str());
 				m = gui->models.get(model_index - 1);
 				m->fbo.bind();
 				gui->renderer->clear();

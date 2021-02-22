@@ -102,24 +102,6 @@ namespace Hyphen
 		clear();
 	}
 
-	void Shader::load_shaders()
-	{
-		DynamicObject<FileAndPath> files;
-		get_files_directory(files, (std::string) shader_path,
-			extension, sizeof(extension) / sizeof(extension[0]));
-
-		if (files.get_size() == 0)
-		{
-			std::cerr << "NO FILES COULD BE LOADED" << std::endl;
-			return;
-		}
-
-		for (int i = 0; i < files.get_size(); i++)
-			push(compile_shader(read(
-				files.get_one(i).path + "\\" + files.get_one(i).file), grep(files.get_one(i).file, ".vs") ?
-				GL_VERTEX_SHADER : GL_FRAGMENT_SHADER));
-	}
-
 	void Shader::load_shader(std::string const& shader)
 	{
 		if (shader_cache.cache[shader])
@@ -134,13 +116,14 @@ namespace Hyphen
 
 		std::cout << "Compile shader " << shader << "\n";
 
-		DynamicObject<FileAndPath> files;
-		get_files_directory(files, (std::string)shader_path + "\\" + shader,
-			extension, sizeof(extension) / sizeof(extension[0]), shader.c_str());
+		Collection<FileAndPath, std::string> files;
+		get_files_directory(files, std::string(shader_path) + "\\" + shader, shader_extension,
+			sizeof(shader_extension) / sizeof(shader_extension[0]), shader.c_str());
 
 		for (int i = 0; i < files.get_size(); i++)
 			push(compile_shader(read(
-				files.get_one(i).path + "\\" + files.get_one(i).file), grep(files.get_one(i).file, ".vs") ?
+				files.get(i)->path + "\\" + files.get(i)->file),
+				grep(files.get(i)->file, ".vs") ?
 				GL_VERTEX_SHADER : GL_FRAGMENT_SHADER));
 
 		shader_cache.cache[shader] = shader_handler;

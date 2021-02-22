@@ -337,13 +337,13 @@ namespace Hyphen
 
 	//===== Templated function which calculates the scale/position/rotation matrix
 	template<class K>
-	static glm::mat4 get_transformation_matrix(K const & scale, K * translation, K const & x_rot, K const & y_rot, K const & z_rot)
+	static glm::mat4 get_transformation_matrix(K const & scale, K * translation, K * rot)
 	{
 		glm::mat4 transform(1.0f);
 		transform = glm::translate(transform, glm::vec3(translation[0], translation[1], translation[2]));
-		transform = glm::rotate(transform, x_rot, glm::vec3(1, 0, 0));
-		transform = glm::rotate(transform, y_rot, glm::vec3(0, 1, 0));
-		transform = glm::rotate(transform, z_rot, glm::vec3(0, 0, 1));
+		transform = glm::rotate(transform, rot[0] * DEG_TO_RAD, glm::vec3(1, 0, 0));
+		transform = glm::rotate(transform, rot[1] * DEG_TO_RAD, glm::vec3(0, 1, 0));
+		transform = glm::rotate(transform, rot[2] * DEG_TO_RAD, glm::vec3(0, 0, 1));
 		transform = glm::scale(transform, glm::vec3(scale, scale, scale));
 
 		//glm::mat4 rot = rot_z * rot_y * rot_x;

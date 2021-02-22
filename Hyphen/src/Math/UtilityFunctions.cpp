@@ -2,7 +2,7 @@
 
 namespace Hyphen
 {
-	void get_files_directory(DynamicObject<FileAndPath>& files, std::string& path, 
+	void get_files_directory(Collection<FileAndPath, std::string> & files, std::string& path, 
 		std::string* extension, int const& size, const char * file_root)
 	{
 		std::string original_path = path;
@@ -41,8 +41,8 @@ namespace Hyphen
 
 						if (add_data)
 						{
-							FileAndPath aux(file.cFileName, j, original_path, file_root);
-							files.push(aux);
+							FileAndPath * aux = new FileAndPath(file.cFileName, j, original_path, file_root);
+							files.add(aux, path + file.cFileName);
 							i++;
 						}
 					}
@@ -78,6 +78,36 @@ namespace Hyphen
 							memcpy(c, file.cFileName, 260);
 							children.push(c);
 						}
+				}
+
+				FindClose(file_handler);
+			}
+		}
+		catch (const std::exception& err)
+		{
+			std::cerr << "\tEXCEPTION IN READING FOLDER" << "\n\t\t" << err.what() << std::endl;
+		}
+	}
+
+	void get_folder_first_children(std::map<std::string, bool>& children, std::string& path)
+	{
+		WIN32_FIND_DATA file;
+		HANDLE file_handler;
+
+		try
+		{
+			if ((file_handler = FindFirstFile((path + "\\*").c_str(), &file)) != INVALID_HANDLE_VALUE)
+			{
+				while (true)
+				{
+					if (FindNextFileA(file_handler, &file) == 0)
+						break;
+
+					if (!grep(file.cFileName, ".."))
+						if (!grep(file.cFileName, "."))
+							if (children.count(file.cFileName) == 0)
+								children[file.cFileName] = GetFileAttributesA(TEXT(
+									(path + "\\" + file.cFileName).c_str())) == FILE_ATTRIBUTE_DIRECTORY;
 				}
 
 				FindClose(file_handler);

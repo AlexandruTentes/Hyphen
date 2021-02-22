@@ -3,6 +3,7 @@
 #define IMGUIINCLUDE_H_
 
 #include "../CompiledHeaders.h"
+#include "../Storage/Filesystem.h"
 
 #ifdef WINDOWS //For now the GUI works only for windows machines
 #include "../thirdparty/imgui/imgui_impl_win32.h"

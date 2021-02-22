@@ -7,6 +7,9 @@
 #include "Layer/LayerStack.h"
 #include "Math/UtilityFunctions.h"
 #include "GraphicEngine/ModelParser/Parser.h"
+#include "../lib/GraphicEngine/Shader.h"
+#include "../lib/GraphicEngine/Buffer/VertexBufferLayout.h"
+#include "../lib/Storage/Filesystem.h"
 
 namespace Hyphen
 {
@@ -18,6 +21,7 @@ namespace Hyphen
 		virtual ~App() = default;
 	protected:
 		LayerStack & layer_stack = LayerStack::get_instance();
+		Filesystem& folder = Filesystem::get_instance();
 	};
 
 	App * create();

@@ -4,6 +4,7 @@
 
 #include "../../CompiledHeaders.h"
 #include "../../Math/Math.h"
+#include "../Type/Model.h"
 
 // A namespace for the camera
 namespace Hyphen
@@ -12,6 +13,7 @@ namespace Hyphen
 	{
 		Matrix4d<float> view;
 		float lat = PI, lon = 0;
+		ModelTransfData* model_data = nullptr;
 	};
 
 	// The Camera class

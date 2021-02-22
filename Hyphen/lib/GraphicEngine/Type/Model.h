@@ -19,6 +19,7 @@ namespace Hyphen
 {
 	struct ModelTransfData
 	{
+		bool camera = false;
 		bool rendered = false;
 		float scale = 1.0f;
 		float rotation[3] = { 0.0f, 0.0f, 0.0f };
@@ -71,7 +72,7 @@ namespace Hyphen
 		std::string model_root;
 		DynamicObject<char*> shaders;
 		ModelPreviewData preview_data;
-		ModelTransfData * data;
+		ModelTransfData * data = nullptr;
 		unsigned int model_scene_no = 0;
 		unsigned int collection_index = 0;
 		unsigned int vao_index = 0;

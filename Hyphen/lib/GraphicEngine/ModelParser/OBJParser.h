@@ -43,7 +43,7 @@ namespace Hyphen
 
 		void parse_extension(std::string const& word);
 		void indexing(std::string const & word);
-		void read_extension(std::string const& path, std::string& model_name, std::string const & file_root);
+		void read_extension(std::string const& path, std::string& model_name, std::string & file_root);
 
 		virtual ~OBJParser() = default;
 	};

@@ -22,8 +22,9 @@ namespace Hyphen
 	static const char * window_title = "Dev Env";
 	static const char * shader_path = "Shader";
 	static const char * model_path = "Model";
+	static const char* miscs_path = "Miscs";
 
-	static std::string extension[] = 
+	static std::string shader_extension[] = 
 	{ 
 		".vs", ".fs" 
 	};

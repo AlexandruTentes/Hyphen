@@ -52,8 +52,7 @@ namespace Hyphen
 		m->data->shader.bind();
 
 		m->data->shader.set_uniform_matrix4fv("transform_mat", get_transformation_matrix(m->data->scale,
-			m->data->translation, TO_RAD(m->data->rotation[0]),
-			TO_RAD(m->data->rotation[1]), TO_RAD(m->data->rotation[2])));
+			m->data->translation, m->data->rotation));
 		m->data->shader.set_uniform_matrix4fv("view_mat", get_view_matrix(view));
 		m->data->shader.set_uniform_matrix4fv("projection_mat", get_perspective_matrix(70.0f,
 			aspect_ratio, 0.1f, 1000.0f));

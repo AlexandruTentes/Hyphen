@@ -6,6 +6,7 @@
 #include "../Math/UtilityFunctions.h"
 #include "../Math/Math.h"
 #include "../GlobalVariables.h"
+#include "../Storage/Filesystem.h"
 
 namespace Hyphen
 {
@@ -32,7 +33,6 @@ namespace Hyphen
 
 		void bind();
 		void unbind();
-		void load_shaders();
 		void load_shader(std::string const& shader);
 		void link_shaders();
 		void catch_shader_error(GLuint shader, GLuint flag, bool is_prog, std::string & err);
@@ -48,6 +48,7 @@ namespace Hyphen
 		unsigned int collection_index = 0;
 		std::string name = "Default";
 		ShaderProgramCache & shader_cache = ShaderProgramCache::get_instance();
+		Filesystem& folder = Filesystem::get_instance();
 	private:
 		GLuint shader_handler;
 		GLuint get_uniform_location(std::string name);

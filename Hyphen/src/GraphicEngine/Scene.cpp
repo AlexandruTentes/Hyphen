@@ -29,8 +29,28 @@ namespace Hyphen
 			}
 			if (ImGui::BeginPopup((m.first + " Properties").c_str()))
 			{
-				ImGui::Text(m.first.c_str());
+				ImGui::Text((m.first + " Properties").c_str());
+				ImGui::NewLine();
 				m.second->bind_data((std::string) m.first);
+
+				if (m.second->data->camera)
+				{
+					ViewPort& viewport = cameras[m.first];
+					Vector4d<float> pos(viewport.view.get_vector(0));
+					Vector4d<float> dir(viewport.view.get_vector(1));
+					Vector4d<float> up(viewport.view.get_vector(2));
+					ImGui::Text("Camera Rotation:");
+					ImGui::SliderFloat3("View Direction", dir.vec, -1.0, 1.0);
+					ImGui::SliderFloat3("Camera Roll", up.vec, 0, 359);
+					ImGui::SliderFloat("Longitude", &viewport.lon, 0, 359);
+					ImGui::SliderFloat("Latitude", &viewport.lat, 0, 359);
+					if (ImGui::Button("Bind here"))
+						bound_camera = m.first;
+					viewport.view.set(pos, dir, up, viewport.view.get_vector(3));
+					ImGui::NewLine();
+					ImGui::Text("Camera Data:");
+				}
+
 				m.second->GUI();
 				ImGui::EndPopup();
 			}
@@ -40,30 +60,6 @@ namespace Hyphen
 				m.second->GUI_end(); 
 			}
 		}
-		for (auto & c : cameras)
-		{
-			ImGui::Image((ImTextureID)0, ImVec2(aspect_ratio * 30.0, aspect_ratio * 30.0));
-			ImGui::SameLine();
-			open_popup = ImGui::Button(c.first.c_str(), ImVec2(aspect_ratio * 50.0, aspect_ratio * 15.0));
-
-			if (open_popup)
-				ImGui::OpenPopup((c.first + " Properties").c_str());
-			if (ImGui::BeginPopup((c.first + " Properties").c_str()))
-			{
-				Vector4d<float> pos(c.second.view.get_vector(0));
-				Vector4d<float> dir(c.second.view.get_vector(1));
-				Vector4d<float> up(c.second.view.get_vector(2));
-				ImGui::Text(c.first.c_str());
-				ImGui::SliderFloat3("Position", pos.vec, -100.0, 100.0);
-				ImGui::SliderFloat3("View Direction", dir.vec, -1.0, 1.0);
-				ImGui::SliderFloat3("Camera Roll", up.vec, 0, 359);
-				ImGui::SliderFloat("Longitude", &c.second.lon, 0, 359);
-				ImGui::SliderFloat("Latitude", &c.second.lat, 0, 359);
-				c.second.view.set(pos, dir, up, c.second.view.get_vector(3));
-				ImGui::EndPopup();
-			}
-		}
-
 		ImGui::End();
 	}
 }
