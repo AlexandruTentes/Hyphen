@@ -8,7 +8,7 @@
 
 namespace Hyphen
 {
-	class Normal : DynamicObject<Vector3d<float>>
+	class Normal : public DynamicObject<Vector3d<float>>
 	{
 	public:
 		bool has_normal = false;

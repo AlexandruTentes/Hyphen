@@ -19,12 +19,22 @@ namespace Hyphen
 {
 	struct ModelTransfData
 	{
+		ModelTransfData()
+		{
+			init_rotation.set(0.0f, 0.0f, 0.0f);
+			init_position.set(0.0f, 0.0f, 0.0f);
+			init_color.set(128.0f, 255.0f, 128.0f);
+		};
 		bool camera = false;
+		bool camera_preview = false;
 		bool rendered = false;
 		float scale = 1.0f;
-		float rotation[3] = { 0.0f, 0.0f, 0.0f };
-		float translation[3] = { 0.0f, 0.0f, 0.0f };
-		float color[3] = { 128.0f, 255.0f, 128.0f };
+		Vector3d<float> init_rotation;
+		Vector3d<float> init_position;
+		Vector3d<float> init_color;
+		Vector3d<float>* position = &init_position;
+		Vector3d<float>* rotation = &init_rotation;
+		Vector3d<float>* color = &init_color;
 		float opacity = 1.0f;
 		int selected_shader_index = 0;
 		Shader shader;

@@ -17,50 +17,88 @@ namespace Hyphen
 
 		//Loading the vertex buffer
 		buffer.load_buffer(GL_ARRAY_BUFFER, m->vertex.get_all(), m->vertex.get_size() *
-			sizeof(m->vertex.get_all()[0]), GL_STATIC_DRAW);
+			sizeof(m->vertex.get_all()[0]), GL_STATIC_DRAW, GL_FLOAT, 3);
 
-		layout.load(GL_FLOAT, 3);
-		va.add_buffer(&layout);
+		//Loading the texture buffer
+		buffer.load_buffer(GL_ARRAY_BUFFER, m->texture.get_all(), m->texture.get_size() *
+			sizeof(m->texture.get_all()[0]), GL_STATIC_DRAW, GL_FLOAT, 2);
+
+		//Loading the normal buffer
+		buffer.load_buffer(GL_ARRAY_BUFFER, m->normal.get_all(), m->normal.get_size() *
+			sizeof(m->normal.get_all()[0]), GL_STATIC_DRAW, GL_FLOAT, 3);
 
 		//Loading the index buffer
 		buffer.load_buffer(GL_ELEMENT_ARRAY_BUFFER, m->index.vertex.get_all(), m->index.vertex.get_size() *
 			sizeof(m->index.vertex.get_all()[0]), GL_STATIC_DRAW);
 
 		va.unbind();
+		
 		m->data->rendered = true;
 	}
 
-	void Renderer::clear()
+	void Renderer::clear(unsigned int flags)
 	{
 		glClearColor(0.0, 0.0, 0.0, 1.0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(flags);
 	}
 
 	void Renderer::draw_scene()
 	{
-		clear();
-		for(auto const& m : scenes.get(bound_scene)->models)
+		for (auto& fbo : scenes.get(bound_scene)->active_cameras)
 		{
-			m.second->bind_data((std::string) m.first);
-			draw_model(m.second);
+			view = scenes.get(bound_scene)->cameras[fbo.first].view;
+			fbo.second.bind();
+			glEnable(GL_DEPTH_TEST);
+			clear();
+
+			for (auto const& m : scenes.get(bound_scene)->models)
+			{
+				m.second->bind_data((std::string)m.first);
+				draw_model(m.second);
+			}
+			fbo.second.unbind();
 		}
+
+		glDisable(GL_DEPTH_TEST);
+		clear(GL_COLOR_BUFFER_BIT);
+
+		//Draw fullscreen quad
+		//Use fbo texture generated as this quad's texture
+		scenes.get(bound_scene)->draw_filter_quad();
 	}
 
 	void Renderer::draw_model(Model* m)
 	{
 		va.bind(m);
 		m->data->shader.bind();
-
+		//glEnable(GL_CULL_FACE | GL_CULL_FACE_MODE);
 		m->data->shader.set_uniform_matrix4fv("transform_mat", get_transformation_matrix(m->data->scale,
-			m->data->translation, m->data->rotation));
+			*m->data->position, *m->data->rotation));
 		m->data->shader.set_uniform_matrix4fv("view_mat", get_view_matrix(view));
 		m->data->shader.set_uniform_matrix4fv("projection_mat", get_perspective_matrix(70.0f,
 			aspect_ratio, 0.1f, 1000.0f));
-		m->data->shader.set_uniform4f("color", glm::vec4(
-			m->data->color[0] / 256, m->data->color[1] / 256,
-			m->data->color[2] / 256, m->data->opacity));
+		m->data->shader.set_uniform3f("view_position", 
+			scenes.get(bound_scene)->cameras[scenes.get(bound_scene)->bound_camera].view[0]);
+		m->data->shader.set_uniform1f("opacity", m->data->opacity);
+		
+		//Material data setup
+		m->data->shader.set_uniform3f("material.ambient", *m->data->color);
+		m->data->shader.set_uniform3f("material.diffuse", *m->data->color);
+		m->data->shader.set_uniform3f("material.specular", Vector3d<float>(0.5, 0.5, 0.5));
+		m->data->shader.set_uniform1f("material.shininess", 32.0);
 
+		//Light data setup
+		m->data->shader.set_uniform3f("light.position", 
+			*scenes.get(bound_scene)->environment_light.position);
+		m->data->shader.set_uniform3f("light.ambient", 
+			*scenes.get(bound_scene)->environment_light.ambient);
+		m->data->shader.set_uniform3f("light.diffuse",
+			*scenes.get(bound_scene)->environment_light.diffuse);
+		m->data->shader.set_uniform3f("light.specular",
+			*scenes.get(bound_scene)->environment_light.specular);
+			
 		glDrawElements(GL_TRIANGLES, m->index.vertex.get_size(), GL_UNSIGNED_INT, nullptr);
+		m->data->shader.unbind();
 		va.unbind();
 	}
 }

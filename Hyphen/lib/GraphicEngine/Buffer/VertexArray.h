@@ -13,7 +13,6 @@ namespace Hyphen
 		VertexArray();
 
 		void new_vao(Model* m);
-		void add_buffer(VertexBufferLayout * layout);
 		void unload(GLuint index);
 		void bind(Model* m);
 		void unbind();

@@ -15,6 +15,7 @@ namespace Hyphen
 		void unbind() const;
 		unsigned int get_id();
 		unsigned int get_tex();
+		bool get_status();
 		void remove();
 
 		virtual ~FrameBuffer() = default;
@@ -22,5 +23,6 @@ namespace Hyphen
 		unsigned int fbo = 0;
 		unsigned int tex = 0;
 		unsigned int rbo = 0;
+		bool status = false;
 	};
 }

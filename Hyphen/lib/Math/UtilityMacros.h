@@ -19,3 +19,4 @@
 #define PI										3.141592653f
 #define HALF_PI									1.570796326f
 #define DEG_TO_RAD								0.017453293f
+#define COLOR_CORRECTION						0.00390625

@@ -628,8 +628,8 @@ namespace Hyphen
 		bool exists(K & key);
 		unsigned int get_size();
 		unsigned int get_index(K & key);
-		T * get(unsigned int i);
-		T * get(K & key);
+		T * get(unsigned int const i);
+		T * get(K const & key);
 
 		virtual ~Collection();
 	private:
@@ -706,13 +706,13 @@ namespace Hyphen
 	}
 
 	template<class T, class K>
-	inline T* Collection<T, K>::get(unsigned int i)
+	inline T* Collection<T, K>::get(unsigned int const i)
 	{
 		return collection.get_one(i);;
 	}
 
 	template<class T, class K>
-	inline T* Collection<T, K>::get(K & key)
+	inline T* Collection<T, K>::get(K const & key)
 	{
 		return collection.get_one(map[key] - 1);
 	}

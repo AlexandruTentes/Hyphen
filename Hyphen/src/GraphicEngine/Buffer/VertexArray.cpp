@@ -12,19 +12,6 @@ namespace Hyphen
 		index_map[array_buffer] = m;
 	}
 
-	void VertexArray::add_buffer(VertexBufferLayout * layout)
-	{
-		_VertexBufferLayout * data = layout->get_all();
-		GLuint offset = 0;
-
-		//These lines will throw a GL error if they attempt to set multiple layouts to the same vertex buffer
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, data[0].size, data[0].type, data[0].normalized ? GL_TRUE : GL_FALSE, layout->get_stride(), (const void *)offset);
-
-		//offset += data[0].size * get_sizeof_gltype(data[0].type);
-		size++;
-	}
-
 	void VertexArray::unload(GLuint index)
 	{
 		if (index == 0)

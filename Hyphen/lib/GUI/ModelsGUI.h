@@ -50,18 +50,17 @@ namespace Hyphen
 				read_raw_model(*folder.get(model_path).get(i));
 				model_index = gui->models.get_index(folder.get(model_path).get(i)->file);
 				m = gui->models.get(model_index - 1);
-				m->GUI_begin();
 				m->bind_data(m->model_name);
+				m->GUI_begin();
 				gui->renderer->render_model(m);
 
 				// If the model doesn t have a viewport, create a new one
 				if (gui->cameras.count(m->model_name) == 0)
 				{
 					ViewPort viewport;
-					viewport.view.set(	0, 1.2, -10, 0,
-										0, 0, 1, 0,
-										0, 1, 0, 0,
-										0, 0, 0, 0);
+					viewport.view.set(	0, 1.2, -10,
+										0, 0, 1,
+										0, 1, 0);
 					gui->cameras[m->model_name] = viewport;
 					gui->bound_camera = m->model_name;
 				}

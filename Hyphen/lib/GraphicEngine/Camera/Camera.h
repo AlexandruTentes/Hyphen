@@ -11,7 +11,7 @@ namespace Hyphen
 {
 	struct ViewPort
 	{
-		Matrix4d<float> view;
+		Matrix3d<float> view;
 		float lat = PI, lon = 0;
 		ModelTransfData* model_data = nullptr;
 	};

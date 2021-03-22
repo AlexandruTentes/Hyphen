@@ -19,11 +19,11 @@ namespace Hyphen
 		void draw_model(Model* m);
 		void draw_scene();
 		void render_model(Model * m);
-		void clear();
+		void clear(unsigned int flags = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		virtual ~Renderer() = default;
 	public:
-		Matrix4d<float> view;
+		Matrix3d<float> view;
 		std::string bound_scene;
 		unsigned int scenes_no = 0;
 		Collection<Scene, std::string>& scenes = Collection<Scene, std::string>::get_instance();

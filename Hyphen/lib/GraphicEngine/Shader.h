@@ -36,7 +36,9 @@ namespace Hyphen
 		void load_shader(std::string const& shader);
 		void link_shaders();
 		void catch_shader_error(GLuint shader, GLuint flag, bool is_prog, std::string & err);
-		void set_uniform4f(std::string const& name, glm::vec4 const & col);
+		void set_uniform4f(std::string const& name, Vector4d<float>& col);
+		void set_uniform3f(std::string const& name, Vector3d<float>& col);
+		void set_uniform1f(std::string const& name, float const& col);
 		void set_uniform_matrix4fv(std::string const& name, glm::mat4 const & mat);
 		void set_uniform1i(std::string const& name, int data);
 		GLuint compile_shader(std::string & text, GLenum shader_type);

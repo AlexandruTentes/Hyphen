@@ -19,8 +19,7 @@ namespace Hyphen
 	public:
 		void load(GLuint type, GLuint size);
 		GLuint get_stride() const;
-	private:
+	public:
 		GLuint stride = 0;
-		bool once = false;
 	};
 }

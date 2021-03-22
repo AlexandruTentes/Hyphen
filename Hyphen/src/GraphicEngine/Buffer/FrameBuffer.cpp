@@ -26,6 +26,7 @@ namespace Hyphen
             std::cout << "ERROR: COULD NOT COMPLETE FRAMEBUFFER" << "\n";
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        status = true;
     }
 
     void FrameBuffer::bind()
@@ -48,10 +49,16 @@ namespace Hyphen
         return tex;
     }
 
+    bool FrameBuffer::get_status()
+    {
+        return status;
+    }
+
     void FrameBuffer::remove()
     {
         glDeleteTextures(1, &tex);
         glDeleteRenderbuffers(1, &rbo);
         glDeleteFramebuffers(1, &fbo);
+        status = false;
     }
 }

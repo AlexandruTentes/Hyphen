@@ -29,7 +29,7 @@ namespace Hyphen
 			Scene* s = new Scene(std::string(name));
 			s->no = gui->renderer->scenes_no;
 			gui->renderer->scenes_no++;
-			s->load_main_camera(gui);
+			s->load_scene_data(gui);
 			scenes.add(s, name);
 		}
 

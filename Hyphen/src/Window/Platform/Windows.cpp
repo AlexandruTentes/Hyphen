@@ -49,22 +49,25 @@ namespace Hyphen
 		DestroyWindow(handler);
 	}
 
-	void Windows::resize(unsigned int width, unsigned int height)
+	void Windows::resize(unsigned int w, unsigned int h)
 	{
-		if (width)
+		if (w)
 		{
-			specs.width = width;
-			half_width = width * 0.5;
+			width = w;
+			specs.width = w;
+			half_width = w * 0.5;
 		}
 
-		if (height)
+		if (h)
 		{
-			specs.height = height;
-			half_height = height * 0.5;
+			height = h;
+			specs.height = h;
+			half_height = h * 0.5;
 		}
 
 		if (specs.height == 0)
 		{
+			height = 1;
 			specs.height = 1;
 			half_height = 1;
 		}

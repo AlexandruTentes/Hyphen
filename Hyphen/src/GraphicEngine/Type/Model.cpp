@@ -8,6 +8,8 @@ namespace Hyphen
 	Model::Model(Vertex& vertex, Normal& normal, Texture& texture, Index& index,
 		std::string const& model_name, std::string const& model_root)
 	{
+		data = new ModelTransfData();
+		model_transf_data.add(data, (std::string)model_name);
 		set(vertex, normal, texture, index, model_name, model_root);
 	}
 
@@ -33,11 +35,11 @@ namespace Hyphen
 
 		float sinc = sinf(preview_data.speed);
 		float cosc = cosf(preview_data.speed);
-		data->translation[0] = sinc;
-		data->translation[2] = cosc;
-		data->rotation[0] = preview_data.speed * preview_data.rotation_angle;
-		data->rotation[1] = preview_data.speed * preview_data.rotation_angle;
-		data->rotation[2] = preview_data.speed * preview_data.rotation_angle;
+		data->position->vec[0] = sinc;
+		data->position->vec[2] = cosc;
+		data->rotation->vec[0] = preview_data.speed * preview_data.rotation_angle;
+		data->rotation->vec[1] = preview_data.speed * preview_data.rotation_angle;
+		data->rotation->vec[2] = preview_data.speed * preview_data.rotation_angle;
 
 		preview_data.speed += preview_data.relative_speed;
 	}
@@ -85,9 +87,9 @@ namespace Hyphen
 	{
 		//Begin the GUI implementation
 		ImGui::SliderFloat("Scale", &data->scale, 0, 1);
-		ImGui::SliderFloat3("Position", data->translation, -9.0, 9.0);
-		ImGui::SliderFloat3("Rotation", data->rotation, 0, 359);
-		ImGui::SliderFloat3("Color", data->color, 0, 255);
+		ImGui::SliderFloat3("Position", data->position->vec, -9.0, 9.0);
+		ImGui::SliderFloat3("Rotation", data->rotation->vec, 0, 359);
+		ImGui::SliderFloat3("Color", data->color->vec, 0, 255);
 		ImGui::SliderFloat("Opacity", &data->opacity, 0, 1);
 		if (ImGui::Combo("Shaders List", &data->selected_shader_index, shaders.get_all(), shaders.get_size()))
 		{
@@ -105,7 +107,7 @@ namespace Hyphen
 		{
 			//Fix DynamicObject datastructure to be able to delete the leaks
 			//std::cout << "delete " << i << " elem " << shaders.get_all()[i] << "\n";
-			//delete[] shaders.get_all()[i];
+			//delete shaders.get_all()[i];
 		}
 
 		shaders.clear();

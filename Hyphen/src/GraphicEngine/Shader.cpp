@@ -61,9 +61,19 @@ namespace Hyphen
 		}
 	}
 
-	void Shader::set_uniform4f(std::string const& name, glm::vec4 const & col)
+	void Shader::set_uniform4f(std::string const& name, Vector4d<float>& col)
 	{
 		glUniform4f(get_uniform_location(name), col[0], col[1], col[2], col[3]);
+	}
+
+	void Shader::set_uniform3f(std::string const& name, Vector3d<float>& col)
+	{
+		glUniform3f(get_uniform_location(name), col[0], col[1], col[2]);
+	}
+
+	void Shader::set_uniform1f(std::string const& name, float const& col)
+	{
+		glUniform1f(get_uniform_location(name), col);
 	}
 
 	void Shader::set_uniform_matrix4fv(std::string const& name, glm::mat4 const & mat)

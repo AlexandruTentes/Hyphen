@@ -29,7 +29,7 @@ namespace Hyphen
 		Scene * scene = new Scene(std::string("Scene0"));
 		scene->no = renderer->scenes_no;
 		renderer->scenes_no++;
-		scene->load_main_camera(this);
+		scene->load_scene_data(this);
 		scenes.add(scene, scene->name);
 		renderer->bound_scene = "Scene0";
 		camera->set_view(scene->cameras["MainCamera"]);
@@ -143,7 +143,7 @@ namespace Hyphen
 			return;
 
 		// While dragging inside gui window, make model image follow cursor
-			// Also read model data from disk
+		// Also read model data from disk
 		if (start_drag && drag && is_cursor_over_gui() && i == drag_model_index && !is_preview)
 		{
 			model_dragndrop = true;
@@ -164,7 +164,7 @@ namespace Hyphen
 				std::to_string(scenes.get(renderer->bound_scene)->no) +
 				std::to_string(m->model_scene_no);
 
-			if (at_drop)
+			if (at_drop && !is_cursor_over_gui())
 				at_drop(this, m, model_transf_data.get(model_scene_name));
 
 			// If a model has been added to the scene, increment the model counter in case 
@@ -187,11 +187,11 @@ namespace Hyphen
 				std::to_string(m->model_scene_no);
 
 			// Load the model into the scene if it is not already, else make it follow the cursor
-			if (!scenes.get(renderer->bound_scene)->models[model_scene_name])
+			if (!scenes.get(renderer->bound_scene)->models.count(model_scene_name))
 			{
 				ModelTransfData* data = new ModelTransfData();
-				data->translation[0] = (float)ImGui::GetMousePos().x / width;
-				data->translation[2] = (float)ImGui::GetMousePos().y / height;
+				data->position->vec[0] = (float)ImGui::GetMousePos().x / width;
+				data->position->vec[2] = (float)ImGui::GetMousePos().y / height;
 				model_transf_data.add(data, model_scene_name);
 				m->bind_data(model_scene_name);
 				renderer->render_model(m);
@@ -199,7 +199,7 @@ namespace Hyphen
 			}
 			else
 			{
-				model_transf_data.get(model_scene_name)->translation[0] = -(float)ImGui::GetMousePos().x / width * 10;
+				model_transf_data.get(model_scene_name)->position->vec[0] = -(float)ImGui::GetMousePos().x / width * 10;
 				//model_transf_data.get(model_scene_name)->translation[2] = -(float) 1 / ImGui::GetMousePos().y;
 			}
 		}
