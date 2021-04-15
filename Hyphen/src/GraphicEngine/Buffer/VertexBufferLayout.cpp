@@ -5,6 +5,7 @@ namespace Hyphen
 	void VertexBufferLayout::load(GLuint type, GLuint size)
 	{
 		push(_VertexBufferLayout{ type, size, (type == GL_UNSIGNED_BYTE ? true : false) });
+
 		this->stride += size * get_sizeof_gltype(type);
 	}
 

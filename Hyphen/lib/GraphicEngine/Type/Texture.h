@@ -12,7 +12,7 @@
 
 namespace Hyphen
 {
-	class Texture : DynamicObject<Vector3d<float>>
+	class Texture : public DynamicObject<Vector3d<float>>
 	{
 	public:
 		bool has_texture = false;

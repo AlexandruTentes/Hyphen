@@ -7,6 +7,7 @@
 #include "WindowAPI.h"
 #include "../Layer/LayerStack.h"
 #include "../GUI/GUI.h"
+#include "WindowInstance.h"
 
 namespace Hyphen
 {
@@ -23,5 +24,6 @@ namespace Hyphen
 	protected:
 		GUI * gui;
 		LayerStack & stack = LayerStack::get_instance();
+		MainWindow & main_window = MainWindow::get_instance();
 	};
 }

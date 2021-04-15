@@ -11,6 +11,8 @@ namespace Hyphen
 
 	bool OpenGLWindowWindows::init()
 	{
+		main_window.main_window = window;
+
 		//===== Casting the parent class instance as the child Windows window =====//
 		window_windows = static_cast<Windows *>(window);
 		bool basic_window_init = window->init();
@@ -38,6 +40,10 @@ namespace Hyphen
 			return false;
 		}
 
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		//glEnable(GL_DEPTH_TEST);
+		
 		window->show();
 		gui->handler = handler;
 		stack.push_overlay(gui);

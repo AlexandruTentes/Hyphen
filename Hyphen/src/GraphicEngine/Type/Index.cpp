@@ -2,7 +2,7 @@
 
 namespace Hyphen
 {
-	void Index::add(Matrix4d<int> const & index)
+	void Index::add(Matrix4d<int> & index)
 	{
 		vertex.push(index.mat[0][0] - 1);
 		vertex.push(index.mat[1 + has_fourth][0] - 1);

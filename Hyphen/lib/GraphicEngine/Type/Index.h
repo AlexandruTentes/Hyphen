@@ -16,6 +16,6 @@ namespace Hyphen
 		DynamicObject<int> texture;
 		DynamicObject<int> normal;
 
-		void add(Matrix4d<int> const & index);
+		void add(Matrix4d<int> & index);
 	};
 }

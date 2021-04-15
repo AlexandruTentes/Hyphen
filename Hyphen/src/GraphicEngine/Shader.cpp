@@ -3,14 +3,9 @@
 namespace Hyphen
 {
 	Shader::Shader()
-	{
-		shader_handler = glCreateProgram();
+	{}
 
-		capacity = default_capacity;
-		shaders = new GLuint[capacity];
-	}
-
-	GLuint Shader::create_shader(std::string text, GLenum shader_type)
+	GLuint Shader::compile_shader(std::string & text, GLenum shader_type)
 	{
 		if (text == "")
 			return 0;
@@ -34,7 +29,7 @@ namespace Hyphen
 		return shader;
 	}
 
-	void Shader::catch_shader_error(GLuint shader, GLuint flag, bool is_prog, std::string err)
+	void Shader::catch_shader_error(GLuint shader, GLuint flag, bool is_prog, std::string & err)
 	{
 		GLint success = 0;
 		GLchar * error;
@@ -66,20 +61,38 @@ namespace Hyphen
 		}
 	}
 
-	void Shader::set_uniform4f(std::string name, glm::vec4 const & col)
+	void Shader::set_uniform4f(std::string const& name, Vector4d<float>& col)
 	{
 		glUniform4f(get_uniform_location(name), col[0], col[1], col[2], col[3]);
 	}
 
-	void Shader::set_uniform_matrix4fv(std::string name, glm::mat4 const & mat)
+	void Shader::set_uniform3f(std::string const& name, Vector3d<float>& col)
+	{
+		glUniform3f(get_uniform_location(name), col[0], col[1], col[2]);
+	}
+
+	void Shader::set_uniform1f(std::string const& name, float const& col)
+	{
+		glUniform1f(get_uniform_location(name), col);
+	}
+
+	void Shader::set_uniform_matrix4fv(std::string const& name, glm::mat4 const & mat)
 	{
 		glUniformMatrix4fv(get_uniform_location(name), 1, GL_FALSE, &mat[0][0]);
 	}
 
-	void Shader::compile_shaders()
+	void Shader::set_uniform1i(std::string const& name, int data)
 	{
+		glUniform1i(get_uniform_location(name), data);
+	}
+
+	void Shader::link_shaders()
+	{
+		if (!to_link)
+			return;
+
 		for (unsigned int i = 0; i < size; i++)
-			glAttachShader(shader_handler, shaders[i]);
+			glAttachShader(shader_handler, data[i]);
 
 		glBindAttribLocation(shader_handler, GL_VERTEX_POSITION, "position");
 		glBindAttribLocation(shader_handler, GL_VERTEX_COLOR, "color");
@@ -89,49 +102,41 @@ namespace Hyphen
 
 		glValidateProgram(shader_handler);
 		catch_shader_error(shader_handler, GL_VALIDATE_STATUS, true, std::string("ERROR WHEN ATTEMPTING TO VALIDATE SHADERS"));
-	}
 
-	void Shader::resize(int size)
-	{
-		if (size <= capacity)
-			return;
-
-		GLuint * aux = new GLuint[size];
-		memcpy(aux, shaders, size * sizeof(GLuint));
-
-		delete[] shaders;
-		shaders = aux;
-
-		capacity = size;
-	}
-
-	void Shader::insert(GLuint shader)
-	{
-		if (shader == 0)
-			return;
-
-		shaders[size] = shader;
-		size++;
-	}
-
-	void Shader::load_shaders()
-	{
-		DynamicObject<FileAndPath> files;
-		get_files_directory(files, (std::string) shader_path,
-			extension, sizeof(extension) / sizeof(extension[0]));
-
-		resize(files.get_size());
-
-		if (files.get_size() == 0)
+		for (unsigned int i = 0; i < size; i++)
 		{
-			std::cerr << "NO FILES COULD BE LOADED" << std::endl;
+			glDetachShader(shader_handler, data[i]);
+			glDeleteShader(data[i]);
+		}
+
+		clear();
+	}
+
+	void Shader::load_shader(std::string const& shader)
+	{
+		if (shader_cache.cache[shader])
+		{
+			shader_handler = shader_cache.cache[shader];
+			to_link = false;
 			return;
 		}
 
+		shader_handler = glCreateProgram();
+		to_link = true;
+
+		std::cout << "Compile shader " << shader << "\n";
+
+		Collection<FileAndPath, std::string> files;
+		get_files_directory(files, std::string(shader_path) + "\\" + shader, shader_extension,
+			sizeof(shader_extension) / sizeof(shader_extension[0]), shader.c_str());
+
 		for (int i = 0; i < files.get_size(); i++)
-			insert(create_shader(read(
-				files.get_one(i).path + "\\" + files.get_one(i).file), grep(files.get_one(i).file, ".vs") ?
+			push(compile_shader(read(
+				files.get(i)->path + "\\" + files.get(i)->file),
+				grep(files.get(i)->file, ".vs") ?
 				GL_VERTEX_SHADER : GL_FRAGMENT_SHADER));
+
+		shader_cache.cache[shader] = shader_handler;
 	}
 
 	void Shader::bind()
@@ -163,12 +168,10 @@ namespace Hyphen
 	{
 		for (unsigned int i = 0; i < size; i++)
 		{
-			glDetachShader(shader_handler, shaders[i]);
-			glDeleteShader(shaders[i]);
+			glDetachShader(shader_handler, data[i]);
+			glDeleteShader(data[i]);
 		}
 
 		glDeleteProgram(shader_handler);
-
-		delete[] shaders;
 	}
 }

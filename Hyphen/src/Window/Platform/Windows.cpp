@@ -49,17 +49,47 @@ namespace Hyphen
 		DestroyWindow(handler);
 	}
 
-	void Windows::resize()
+	void Windows::resize(unsigned int w, unsigned int h)
 	{
-		//Branchless if(specs.height == 0) then specs.height = 1, else retain previous height
-		//division by 0 protection!
-		specs.height = (specs.height != 0) * specs.height + 1 * (specs.height == 0);
+		if (w)
+		{
+			width = w;
+			specs.width = w;
+			half_width = w * 0.5;
+		}
+
+		if (h)
+		{
+			height = h;
+			specs.height = h;
+			half_height = h * 0.5;
+		}
+
+		if (specs.height == 0)
+		{
+			height = 1;
+			specs.height = 1;
+			half_height = 1;
+		}
+
 		aspect_ratio = (float)specs.width / specs.height;
 		glViewport(0, 0, specs.width, specs.height);
-		glMatrixMode(GL_PROJECTION_MATRIX);
-
-		glMatrixMode(GL_MODELVIEW);                     // Select The Modelview Matrix
+		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
+		glMatrixMode(GL_MODELVIEW);                     // Select The Modelview Matrix
+	}
+
+	void Windows::set_cursor_pos(float x, float y)
+	{
+		client_coords.x = x;
+		client_coords.y = y;
+		ClientToScreen(handler, & client_coords);
+		SetCursorPos(client_coords.x, client_coords.y);
+	}
+
+	void Windows::show_cursor(bool status)
+	{
+		ShowCursor(status);
 	}
 
 	void Windows::kill_window()
@@ -132,8 +162,8 @@ namespace Hyphen
 		pixel_format.iPixelType = PFD_TYPE_RGBA;
 		pixel_format.cColorBits = 32;
 		pixel_format.cDepthBits = 24;
-		pixel_format.cAlphaBits = 16;
-		pixel_format.cAccumAlphaBits = 16;
+		pixel_format.cAlphaBits = 8;
+		pixel_format.cAccumAlphaBits = 0;
 		pixel_format.iLayerType = PFD_MAIN_PLANE;
 
 		//===== Registering the window details for validation =====//
@@ -245,15 +275,6 @@ namespace Hyphen
 
 		is_running = true;
 	}
-
-	std::tuple<float, float> Windows::get_float_xy(int x, int y)
-	{
-		//Get OS dpi scaling and normalize it to windows (96 pixels per unit)
-		float dip_x = GetDeviceCaps(hdc, LOGPIXELSX) / 96.0f;
-		float dip_y = GetDeviceCaps(hdc, LOGPIXELSY) / 96.0f;
-
-		return std::make_tuple(((float)x) / dip_x, ((float)x) / dip_y);
-	}
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -263,6 +284,7 @@ namespace Hyphen
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
 	using namespace Hyphen;
+	KeyCodes& codes = KeyCodes::get_instance();
 
 #define POLL(T, e)	EventPoll::get_instance().event_poll[e.type] = true; \
 					delete EventPoll::get_instance().event_array[T::type]; \
@@ -302,6 +324,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	{
 		KeyDown key_down(LOWORD(wparam));
 		window_manager_instance.get_one_window(hwnd)->on_event<KeyDown>(key_down);
+		codes.key_map[key_down.get_key()] = true;
 		POLL(KeyDown, key_down)
 		return 0;
 	}
@@ -309,6 +332,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	{
 		KeyUp key_up(LOWORD(wparam));
 		window_manager_instance.get_one_window(hwnd)->on_event<KeyUp>(key_up);
+		codes.key_map[key_up.get_key()] = false;
 		POLL(KeyUp, key_up)
 		return 0;
 	}
@@ -316,7 +340,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	{
 		WindowResize resize(LOWORD(lparam), HIWORD(lparam));
 		window_manager_instance.get_one_window(hwnd)->on_event<WindowResize>(resize);
-		window_manager_instance.get_one_window(hwnd)->resize();
+		window_manager_instance.get_one_window(hwnd)->resize(resize.get_width(), resize.get_height());
 		POLL(WindowResize, resize)
 		return 0;
 	}
@@ -331,8 +355,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 	}
 	case WM_MOUSEMOVE:
 	{
-		std::tuple<float, float> xy_tuple = ((Windows *)window_manager_instance.get_one_window(hwnd))->get_float_xy(GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam));
-		MouseMove mouse(std::get<0>(xy_tuple), std::get<1>(xy_tuple));
+		MouseMove mouse(GET_X_LPARAM(lparam), GET_Y_LPARAM(lparam));
 		window_manager_instance.get_one_window(hwnd)->on_event<MouseMove>(mouse);
 		POLL(MouseMove, mouse)
 		return 0;

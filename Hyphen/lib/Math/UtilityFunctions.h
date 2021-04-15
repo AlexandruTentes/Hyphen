@@ -6,10 +6,14 @@
 #include "DynamicDatastructure.h"
 #include "../Event/Event.h"
 #include "Strmanip.h"
+#include "../Storage/Filesystem.h"
 
 namespace Hyphen
 {
-	void get_files_directory(DynamicObject<FileAndPath>& files, std::string& path, std::string* extension, int const& size);
+	void get_files_directory(Collection<FileAndPath, std::string> & files, std::string& path, 
+		std::string* extension, int const& size, const char * file_root = nullptr);
+	void get_folder_first_children(DynamicObject<char *> & children, std::string& path);
+	void get_folder_first_children(std::map<std::string, bool>& children, std::string& path);
 	int get_sizeof_gltype(unsigned int type);
 
 	template <class T> bool poll_event(T * e)
