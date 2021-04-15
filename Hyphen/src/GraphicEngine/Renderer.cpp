@@ -71,20 +71,19 @@ namespace Hyphen
 	{
 		va.bind(m);
 		m->data->shader.bind();
-		//glEnable(GL_CULL_FACE | GL_CULL_FACE_MODE);
+		glEnable(GL_DEPTH_TEST);
 		m->data->shader.set_uniform_matrix4fv("transform_mat", get_transformation_matrix(m->data->scale,
 			*m->data->position, *m->data->rotation));
 		m->data->shader.set_uniform_matrix4fv("view_mat", get_view_matrix(view));
 		m->data->shader.set_uniform_matrix4fv("projection_mat", get_perspective_matrix(70.0f,
 			aspect_ratio, 0.1f, 1000.0f));
-		m->data->shader.set_uniform3f("view_position", 
-			scenes.get(bound_scene)->cameras[scenes.get(bound_scene)->bound_camera].view[0]);
+		m->data->shader.set_uniform3f("view_position", view[0]);
 		m->data->shader.set_uniform1f("opacity", m->data->opacity);
 		
 		//Material data setup
-		m->data->shader.set_uniform3f("material.ambient", *m->data->color);
-		m->data->shader.set_uniform3f("material.diffuse", *m->data->color);
-		m->data->shader.set_uniform3f("material.specular", Vector3d<float>(0.5, 0.5, 0.5));
+		m->data->shader.set_uniform3f("material.ambient", m->data->color->mul(COLOR_CORRECTION));
+		m->data->shader.set_uniform3f("material.diffuse", m->data->color->mul(COLOR_CORRECTION));
+		m->data->shader.set_uniform3f("material.specular", Vector3d<float>(0.8, 0.8, 0.8));
 		m->data->shader.set_uniform1f("material.shininess", 32.0);
 
 		//Light data setup
@@ -98,6 +97,7 @@ namespace Hyphen
 			*scenes.get(bound_scene)->environment_light.specular);
 			
 		glDrawElements(GL_TRIANGLES, m->index.vertex.get_size(), GL_UNSIGNED_INT, nullptr);
+		glDisable(GL_DEPTH_TEST);
 		m->data->shader.unbind();
 		va.unbind();
 	}

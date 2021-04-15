@@ -162,8 +162,8 @@ namespace Hyphen
 		pixel_format.iPixelType = PFD_TYPE_RGBA;
 		pixel_format.cColorBits = 32;
 		pixel_format.cDepthBits = 24;
-		pixel_format.cAlphaBits = 16;
-		pixel_format.cAccumAlphaBits = 16;
+		pixel_format.cAlphaBits = 8;
+		pixel_format.cAccumAlphaBits = 0;
 		pixel_format.iLayerType = PFD_MAIN_PLANE;
 
 		//===== Registering the window details for validation =====//

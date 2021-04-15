@@ -9,8 +9,8 @@ namespace Hyphen
         init_color.set(255.0f, 255.0f, 255.0f);
         //init_ambient.set(color->sub(256).mul(-init_ambient_strength));
         //init_diffuse.set(color->sub(256).mul(-1));
-        init_ambient.set(0.9f, 0.9f, 0.9f);
-        init_diffuse.set(0.9f, 0.9f, 0.9f);
-        init_specular.set(1.0, 1.0, 1.0);
+        init_ambient.set(0.5f, 0.5f, 0.5f);
+        init_diffuse.set(0.5f, 0.5f, 0.5f);
+        init_specular.set(1.0f, 1.0f, 1.0f);
     }
 }

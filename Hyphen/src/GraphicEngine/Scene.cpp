@@ -26,10 +26,7 @@ namespace Hyphen
 		ImGui::SetNextWindowSize(ImVec2(0, height * 0.5));
 		ImGui::Begin(name.c_str(), NULL, ImGuiWindowFlags_NoResize);
 
-		ImGui::Text("Application average: \n%.3f ms/frame",
-			1000.0f / ImGui::GetIO().Framerate);
-		ImGui::Text("Frames: %.1f FPS", 
-			1.0f / ImGui::GetIO().Framerate);
+		//ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
 		bool open_popup = false;
 		std::string model_index;

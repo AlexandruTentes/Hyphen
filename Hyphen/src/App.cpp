@@ -18,11 +18,25 @@ namespace Hyphen
 		if (!app_window->init())
 			std::cerr << "Error at window initialization!\n";
 				
+		auto prev_t = std::chrono::system_clock::now();
+		int frame_count = 0;
+
 		//===== =====//
 		while (app_window->window->is_running)
 		{
-			glClearColor(0.5, 0.25, 0.5, 1.0);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			auto current_t = std::chrono::system_clock::now();
+			frame_count++;
+			long long prev_time = std::chrono::duration_cast<std::chrono::seconds>(
+				prev_t.time_since_epoch()).count();
+			long long current_time = std::chrono::duration_cast<std::chrono::seconds>(
+				current_t.time_since_epoch()).count();
+
+			if (current_time - prev_time >= 1)
+			{
+				std::cout << "FPS: " << frame_count << "\n";
+				frame_count = 0;
+				prev_t = current_t;
+			}
 
 			/*
 			if (poll_event(&kd))

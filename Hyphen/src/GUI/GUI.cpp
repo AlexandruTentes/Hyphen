@@ -48,7 +48,7 @@ namespace Hyphen
 #endif
 		delete renderer;
 	}
-
+	
 	void GUI::update()
 	{
 		ImGuiIO & io = ImGui::GetIO();

@@ -65,7 +65,7 @@ namespace Hyphen
 
 		//Loading the camera
 		m = cache_models.get((std::string)"Camera.obj");
-		model_scene_name = "MainCamera";
+		model_scene_name = "MainCamera" + std::to_string(no);
 		data = new ModelTransfData();
 		data->rotation->vec[1] = 180.0f;
 		model_transf_data.add(data, model_scene_name);
@@ -82,7 +82,7 @@ namespace Hyphen
 		
 		//Loading the environment light
 		m = cache_models.get((std::string)"EnvironmentLight.obj");
-		model_scene_name = "EnvironmentLight";
+		model_scene_name = "EnvironmentLight" + std::to_string(no);
 		data = new ModelTransfData();
 		model_transf_data.add(data, model_scene_name);
 		m->bind_data(model_scene_name);
